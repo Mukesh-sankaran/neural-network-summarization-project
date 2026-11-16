@@ -1,0 +1,242 @@
+"""
+Complete Seq2Seq Summarization Model (Encoder + Bahdanau Attention + Decoder).
+Supports Teacher Forcing during training, Loss calculation compatibility,
+Inference summary generation, and automatic device detection (MPS / CPU / CUDA).
+"""
+
+import random
+import torch
+import torch.nn as nn
+from typing import Tuple, List, Optional, Dict, Any
+
+from src.encoder import Encoder
+from src.decoder import Decoder
+from src.preprocess import PAD_IDX, SOS_IDX, EOS_IDX
+
+
+def get_device() -> torch.device:
+    """
+    Automatically selects Apple Silicon MPS if available, otherwise CUDA or CPU.
+    """
+    if torch.backends.mps.is_available():
+        return torch.device("mps")
+    elif torch.cuda.is_available():
+        return torch.device("cuda")
+    else:
+        return torch.device("cpu")
+
+
+class Seq2Seq(nn.Module):
+    """
+    Sequence-to-Sequence Architecture for Document Summarization.
+    
+    Combines:
+    - Bidirectional LSTM Encoder
+    - Bahdanau Additive Attention
+    - Attention-Augmented LSTM Decoder
+    """
+    def __init__(
+        self,
+        vocab_size: int = 20000,
+        embedding_dim: int = 128,
+        encoder_hidden_dim: int = 256,
+        decoder_hidden_dim: int = 256,
+        dropout: float = 0.0,
+        pad_idx: int = PAD_IDX,
+        sos_idx: int = SOS_IDX,
+        eos_idx: int = EOS_IDX
+    ):
+        super(Seq2Seq, self).__init__()
+
+        self.vocab_size = vocab_size
+        self.pad_idx = pad_idx
+        self.sos_idx = sos_idx
+        self.eos_idx = eos_idx
+
+        # Instantiate Encoder
+        self.encoder = Encoder(
+            vocab_size=vocab_size,
+            embedding_dim=embedding_dim,
+            encoder_hidden_dim=encoder_hidden_dim,
+            decoder_hidden_dim=decoder_hidden_dim,
+            dropout=dropout,
+            padding_idx=pad_idx
+        )
+
+        # Instantiate Decoder (contains Bahdanau Attention)
+        self.decoder = Decoder(
+            vocab_size=vocab_size,
+            embedding_dim=embedding_dim,
+            decoder_hidden_dim=decoder_hidden_dim,
+            encoder_hidden_dim=encoder_hidden_dim,
+            dropout=dropout,
+            padding_idx=pad_idx
+        )
+
+    def forward(
+        self,
+        src: torch.Tensor,
+        tgt: torch.Tensor,
+        teacher_forcing_ratio: float = 0.5
+    ) -> torch.Tensor:
+        """
+        Forward pass during training / validation.
+        
+        Args:
+            src: Source text token indices of shape [batch_size, source_length].
+            tgt: Target summary token indices of shape [batch_size, target_length].
+            teacher_forcing_ratio: Probability of feeding ground-truth target token
+                                   as next decoder input instead of model prediction.
+                                   
+        Returns:
+            outputs: Unnormalized vocabulary logits of shape [batch_size, target_length - 1, vocab_size].
+        """
+        batch_size = src.shape[0]
+        target_len = tgt.shape[1]
+
+        # Create source padding mask (1 for valid content, 0 for <PAD>)
+        mask = (src != self.pad_idx)
+
+        # Step 1: Encode source sequence
+        encoder_outputs, hidden, cell = self.encoder(src)
+
+        # Step 2: Initialize output logits tensor of shape [batch_size, target_length - 1, vocab_size]
+        outputs = torch.zeros(batch_size, target_len - 1, self.vocab_size, device=src.device)
+
+        # First input token to the decoder is always <SOS> (column 0 of target batch)
+        decoder_input = tgt[:, 0]
+
+        # Step 3: Decode sequence step-by-step for target_len - 1 steps
+        for t in range(target_len - 1):
+            # Run single step decoder
+            logits, hidden, cell, _ = self.decoder(
+                input_token=decoder_input,
+                hidden_state=hidden,
+                cell_state=cell,
+                encoder_outputs=encoder_outputs,
+                mask=mask
+            )
+
+            # Store logits for current step t
+            outputs[:, t, :] = logits
+
+            # Decide next input token via Teacher Forcing
+            use_teacher_forcing = (random.random() < teacher_forcing_ratio)
+            top1_prediction = logits.argmax(dim=1)
+
+            decoder_input = tgt[:, t + 1] if use_teacher_forcing else top1_prediction
+
+        return outputs
+
+    def compute_loss(
+        self,
+        logits: torch.Tensor,
+        tgt: torch.Tensor,
+        criterion: Optional[nn.Module] = None
+    ) -> torch.Tensor:
+        """
+        Computes CrossEntropyLoss ignoring <PAD> tokens and skipping initial <SOS> token.
+        
+        Args:
+            logits: Unnormalized logits of shape [batch_size, target_length - 1, vocab_size].
+            tgt: Ground truth target token indices of shape [batch_size, target_length].
+            criterion: Optional PyTorch loss function (defaults to CrossEntropyLoss(ignore_index=pad_idx)).
+            
+        Returns:
+            loss: Scalar PyTorch loss tensor.
+        """
+        if criterion is None:
+            criterion = nn.CrossEntropyLoss(ignore_index=self.pad_idx)
+
+        # Flatten logits: [(target_len - 1) * batch_size, vocab_size]
+        output_dim = logits.shape[-1]
+        logits_flat = logits.reshape(-1, output_dim)
+        
+        # Flatten targets: [(target_len - 1) * batch_size] (skipping <SOS> token at index 0)
+        tgt_flat = tgt[:, 1:].reshape(-1)
+
+        loss = criterion(logits_flat, tgt_flat)
+        return loss
+
+    @torch.no_grad()
+    def generate_summary(
+        self,
+        src_tensor: torch.Tensor,
+        vocab: Any,
+        max_target_len: int = 60,
+        device: Optional[torch.device] = None
+    ) -> Tuple[str, List[int], torch.Tensor]:
+        """
+        Greedy decoding inference method to generate a summary for a single document.
+        
+        Args:
+            src_tensor: Source document tensor of shape [1, source_length] or [source_length].
+            vocab: Vocabulary object instance for decoding token indices to words.
+            max_target_len: Maximum summary token length.
+            device: Optional torch.device.
+            
+        Returns:
+            generated_summary: Decoded text string of the generated summary.
+            predicted_indices: List of generated token indices.
+            attention_matrix: Tensor of shape [generated_tokens, source_length] containing attention weights.
+        """
+        self.eval()
+
+        if device is None:
+            device = next(self.parameters()).device
+
+        if src_tensor.dim() == 1:
+            src_tensor = src_tensor.unsqueeze(0)  # Shape [1, source_length]
+
+        src_tensor = src_tensor.to(device)
+        mask = (src_tensor != self.pad_idx)
+
+        # Encode source document
+        encoder_outputs, hidden, cell = self.encoder(src_tensor)
+
+        # Start decoder with <SOS> token
+        decoder_input = torch.tensor([self.sos_idx], dtype=torch.long, device=device)
+
+        predicted_indices = []
+        attn_weights_list = []
+
+        for _ in range(max_target_len - 1):
+            logits, hidden, cell, attn_weights = self.decoder(
+                input_token=decoder_input,
+                hidden_state=hidden,
+                cell_state=cell,
+                encoder_outputs=encoder_outputs,
+                mask=mask
+            )
+
+            # Greedy selection: pick token with highest logit/probability
+            pred_token_id = logits.argmax(dim=1).item()
+
+            attn_weights_list.append(attn_weights.squeeze(0).cpu())
+
+            if pred_token_id == self.eos_idx:
+                break
+
+            predicted_indices.append(pred_token_id)
+            decoder_input = torch.tensor([pred_token_id], dtype=torch.long, device=device)
+
+        # Convert token indices back to text string
+        generated_summary = vocab.decode(predicted_indices, skip_special_tokens=True)
+        
+        attention_matrix = torch.stack(attn_weights_list) if attn_weights_list else torch.empty(0)
+
+        return generated_summary, predicted_indices, attention_matrix
+
+    def count_parameters(self) -> Dict[str, int]:
+        """
+        Returns parameter counts for Encoder, Attention, Decoder, and Total model.
+        """
+        encoder_params = sum(p.numel() for p in self.encoder.parameters() if p.requires_grad)
+        decoder_params = sum(p.numel() for p in self.decoder.parameters() if p.requires_grad)
+        total_params = sum(p.numel() for p in self.parameters() if p.requires_grad)
+
+        return {
+            "Encoder": encoder_params,
+            "Decoder (including Attention)": decoder_params,
+            "Total Trainable Parameters": total_params
+        }

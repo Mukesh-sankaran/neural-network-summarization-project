@@ -1,0 +1,10 @@
+{
+  "base_model": "sshleifer/distilbart-cnn-12-6",
+  "pilot_steps": 3,
+  "train_samples": 10,
+  "final_train_loss": NaN,
+  "final_val_loss": NaN,
+  "elapsed_seconds": 299.59890770795755,
+  "device": "mps",
+  "status": "pilot_completed"
+}

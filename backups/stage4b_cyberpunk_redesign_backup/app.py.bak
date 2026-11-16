@@ -1,0 +1,749 @@
+"""
+NNDL Project — Neural News Summarization Frontend
+Interactive Streamlit Application for Sequence-to-Sequence Document Summarization
+using Custom BiLSTM Encoder, Bahdanau Additive Attention, and LSTM Decoder.
+"""
+
+import os
+import sys
+from typing import Dict, List, Optional, Tuple, Any
+
+import streamlit as st
+import torch
+import matplotlib.pyplot as plt
+import numpy as np
+
+# Add project root to sys.path
+sys.path.append(os.path.abspath(os.path.dirname(__file__)))
+
+from src.preprocess import tokenize, PAD_IDX, SOS_IDX, EOS_IDX
+from src.vocabulary import Vocabulary
+from src.model import Seq2Seq, get_device
+from src.evaluate import evaluate_summary
+from src.entity_evaluation import (
+    evaluate_entity_preservation,
+    evaluate_numeric_consistency,
+    extract_named_entities,
+    extract_numeric_values,
+)
+
+# -----------------------------------------------------------------------------
+# Pre-curated Sample Articles (for quick testing without heavy Parquet loading)
+# -----------------------------------------------------------------------------
+SAMPLE_ARTICLES = {
+    "Robert Hardy Antiques Auction (CNN/DailyMail Example #10)": {
+        "article": (
+            "Veteran actor Robert Hardy is selling his enormous collection of antiques in a £100,000 "
+            "auction after deciding to downsize his home. The star, known for appearing in All Creatures "
+            "Great and Small and playing Winston Churchill several times, is auctioning off more than "
+            "200 items he has collected over his career. Mr Hardy, 89, is a keen military historian who "
+            "studied English with J.R.R. Tolkien and C.S. Lewis at Oxford before serving in the RAF during "
+            "the Second World War. Among the objects which have gone up for auction are a huge 3D diorama "
+            "of the Battle of Agincourt, historic longbows, and rare antique furniture."
+        ),
+        "reference": (
+            "Robert Hardy, 89, is a military enthusiast who studied English literature under J.R.R. Tolkien .\n"
+            "He is selling off a huge collection of books, artwork and furniture .\n"
+            "Among the objects which have gone up for auction are a huge 3D diorama of the Battle of Agincourt ."
+        ),
+    },
+    "Golf: Justin Rose Houston Open (CNN/DailyMail Example #1)": {
+        "article": (
+            "Down Augusta way they say the azaleas are in full bloom, which is more than can be said for "
+            "England's Justin Rose. A bruising Florida swing last month saw the Englishman fall outside the "
+            "world's top 10 for the first time in three years. But a sparkling seven-under-par 65 in the "
+            "first round of the Shell Houston Open on Thursday suggests he is on the way back. Three-time "
+            "Masters champion Phil Mickelson enjoyed a return to form with a 66, while Paul Casey celebrated "
+            "his Masters invitation with a fine round of 68."
+        ),
+        "reference": (
+            "Justin Rose bounced back from Florida misery by carding 69 in Houston .\n"
+            "Three-time Masters champion Phil Mickelson enjoyed return to form .\n"
+            "Paul Casey celebrated last-gasp Masters invitation with fine round of 68 ."
+        ),
+    },
+    "Hoax Ambulance Calls (CNN/DailyMail Example #3)": {
+        "article": (
+            "When emergency crews received a call saying 'someone' had been knocked down by a car in Essex, "
+            "they immediately sent two ambulances to the rescue. But the vehicles returned to base empty after "
+            "discovering the victim was in fact a squirrel. East of England ambulance service revealed the "
+            "bizarre incident as they warned hoax and trivial calls are putting lives at risk. In another "
+            "incident, a man dialled 999 to say he had dropped a burger which was bleeding. Ambulance bosses "
+            "stressed that non-emergency calls delay response times for critical patients."
+        ),
+        "reference": (
+            "Woman reported 'someone' had been run over, but victim was a squirrel .\n"
+            "Another man dialled 999 to say he dropped a burger which was 'bleeding'\n"
+            "East of England ambulance service warned hoax calls can cost lives ."
+        ),
+    },
+    "Custom Article (Enter your own)": {
+        "article": "",
+        "reference": "",
+    },
+}
+
+
+# -----------------------------------------------------------------------------
+# Cached Model & Vocabulary Loader
+# -----------------------------------------------------------------------------
+@st.cache_resource(show_spinner="Loading PyTorch model checkpoint and vocabulary...")
+def load_model_resources() -> Tuple[Optional[Seq2Seq], Optional[Vocabulary], Optional[Dict[str, Any]], torch.device, Optional[str]]:
+    """
+    Safely loads the pickled vocabulary and PyTorch checkpoint into memory.
+    Returns: (model, vocab, checkpoint_meta, device, error_message)
+    """
+    vocab_path = "models/vocab.pkl"
+    checkpoint_path = "models/best_model.pt"
+
+    device = get_device()
+
+    if not os.path.exists(vocab_path):
+        return None, None, None, device, f"Vocabulary file not found at `{vocab_path}`."
+
+    if not os.path.exists(checkpoint_path):
+        return None, None, None, device, f"Model checkpoint not found at `{checkpoint_path}`."
+
+    try:
+        vocab = Vocabulary.load(vocab_path)
+    except Exception as e:
+        return None, None, None, device, f"Failed to load vocabulary: {str(e)}"
+
+    try:
+        checkpoint = torch.load(checkpoint_path, map_location=device)
+        model = Seq2Seq(
+            vocab_size=len(vocab),
+            embedding_dim=128,
+            encoder_hidden_dim=256,
+            decoder_hidden_dim=256,
+            pad_idx=PAD_IDX,
+            sos_idx=SOS_IDX,
+            eos_idx=EOS_IDX,
+        ).to(device)
+
+        model.load_state_dict(checkpoint["model_state_dict"])
+        model.eval()
+
+        checkpoint_meta = {
+            "epoch": checkpoint.get("epoch", 3),
+            "train_loss": checkpoint.get("train_loss", 6.3864),
+            "val_loss": checkpoint.get("val_loss", 6.8798),
+            "vocab_size": checkpoint.get("vocab_size", len(vocab)),
+            "device": str(device),
+        }
+
+        return model, vocab, checkpoint_meta, device, None
+    except Exception as e:
+        return None, vocab, None, device, f"Failed to instantiate or load model: {str(e)}"
+
+
+# -----------------------------------------------------------------------------
+# Helper Functions
+# -----------------------------------------------------------------------------
+def detect_degenerate_output(tokens: List[str]) -> Tuple[bool, str]:
+    """
+    Detects whether the generated summary suffers from sequence degeneration or repetition loops.
+    """
+    if not tokens:
+        return True, "The model emitted an empty sequence."
+
+    total = len(tokens)
+    from collections import Counter
+    counts = Counter(tokens)
+    most_common_tok, most_common_cnt = counts.most_common(1)[0]
+
+    repetition_ratio = most_common_cnt / total
+    punctuation_count = sum(counts[p] for p in [".", ",", "'", '"', "-", "!", "?"] if p in counts)
+    punct_ratio = punctuation_count / total
+
+    if repetition_ratio > 0.40:
+        return True, f"Repetitive collapse detected: token '{most_common_tok}' accounts for {repetition_ratio:.1%} of all output."
+
+    if punct_ratio > 0.60:
+        return True, f"Punctuation collapse detected: {punct_ratio:.1%} of generated tokens are standalone punctuation marks."
+
+    return False, "Output does not trigger trivial repetition flags, but remains an undertrained prototype."
+
+
+def plot_attention_heatmap(attn_matrix: torch.Tensor, src_tokens: List[str], gen_tokens: List[str], max_src_display: int = 35) -> plt.Figure:
+    """
+    Plots an attention alignment heatmap between generated steps and source tokens.
+    """
+    # Slice to actual content tokens
+    src_len = min(len(src_tokens), max_src_display)
+    gen_len = len(gen_tokens)
+
+    weights = attn_matrix[:gen_len, :src_len].numpy()
+
+    fig, ax = plt.subplots(figsize=(max(8, src_len * 0.35), max(4, gen_len * 0.28)))
+    cax = ax.matshow(weights, cmap="Blues", aspect="auto")
+    fig.colorbar(cax, ax=ax, fraction=0.046, pad=0.04)
+
+    ax.set_xticks(range(src_len))
+    ax.set_yticks(range(gen_len))
+
+    ax.set_xticklabels(src_tokens[:src_len], rotation=65, ha="left", fontsize=8)
+    ax.set_yticklabels(gen_tokens, fontsize=8)
+
+    ax.set_xlabel("Source Document Tokens (First 35)", fontsize=9, labelpad=10)
+    ax.set_ylabel("Generated Summary Steps", fontsize=9)
+    ax.set_title("Bahdanau Additive Attention Alignment Heatmap", fontsize=11, pad=15)
+    plt.tight_layout()
+
+    return fig
+
+
+def clear_generated_summary_state(session_state_dict: Optional[Any] = None) -> List[str]:
+    """
+    Invalidates cached generation results when inputs or samples change.
+    Accepts an optional dict/session_state for modular unit testing.
+    """
+    target = st.session_state if session_state_dict is None else session_state_dict
+    keys_to_clear = [
+        "gen_summary",
+        "gen_token_ids",
+        "attn_matrix",
+        "src_tokens",
+        "last_article",
+        "last_reference",
+        "used_strategy",
+        "used_beam_width",
+        "used_trigram_blocking",
+        "used_length_penalty",
+    ]
+    cleared = []
+    for key in keys_to_clear:
+        if key in target:
+            if hasattr(target, "pop"):
+                target.pop(key, None)
+            else:
+                del target[key]
+            cleared.append(key)
+    return cleared
+
+
+# -----------------------------------------------------------------------------
+# Main Application UI
+# -----------------------------------------------------------------------------
+def main():
+    st.set_page_config(
+        page_title="NNDL — Neural News Summarization",
+        page_icon="📰",
+        layout="wide",
+        initial_sidebar_state="expanded",
+    )
+
+    # Custom Header Styling with High Contrast & Cyberpunk Design Preservation
+    st.markdown(
+        """
+        <style>
+        .main-title { font-size: 2.2rem; font-weight: 700; color: #1e3a8a; margin-bottom: 0.2rem; }
+        .sub-title { font-size: 1.05rem; color: #475569; margin-bottom: 1.5rem; }
+        .metric-card {
+            background-color: #f8fafc;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            color: #0f172a;
+        }
+        .degenerate-warning {
+            background-color: #fef2f2;
+            border-left: 4px solid #ef4444;
+            padding: 0.75rem 1rem;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+            color: #991b1b;
+        }
+        .degenerate-warning b, .degenerate-warning strong {
+            color: #7f1d1d;
+        }
+        .degenerate-warning small {
+            color: #b91c1c;
+        }
+        .degenerate-warning code {
+            color: #991b1b;
+            background-color: #fee2e2;
+            padding: 0.15rem 0.35rem;
+            border-radius: 3px;
+            font-weight: 600;
+        }
+        .info-notice {
+            background-color: #eff6ff;
+            border-left: 4px solid #3b82f6;
+            padding: 0.75rem 1rem;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+            color: #1e3a8a;
+        }
+        .info-notice b, .info-notice strong {
+            color: #172554;
+        }
+        .info-notice code {
+            color: #1d4ed8;
+            background-color: #dbeafe;
+            padding: 0.15rem 0.35rem;
+            border-radius: 3px;
+            font-weight: 600;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    st.markdown('<div class="main-title">NNDL — Neural News Summarization</div>', unsafe_allow_html=True)
+    st.markdown(
+        '<div class="sub-title">Sequence-to-Sequence Abstractive Summarization with Bidirectional LSTM, '
+        'Bahdanau Additive Attention, and Multi-Metric Grounding Evaluation</div>',
+        unsafe_allow_html=True,
+    )
+
+    # Load Model Resources
+    model, vocab, meta, device, load_error = load_model_resources()
+
+    # -------------------------------------------------------------------------
+    # Sidebar: Model Architecture & Status
+    # -------------------------------------------------------------------------
+    with st.sidebar:
+        st.header("⚙️ Model Configuration")
+
+        if load_error:
+            st.error(f"⚠️ Model Loading Error: {load_error}")
+        else:
+            st.success("✅ Model and Vocabulary Loaded")
+            st.markdown(
+                f"""
+                - **Architecture:** Seq2Seq (BiLSTM + Bahdanau Attn)
+                - **Total Parameters:** **25,229,600**
+                - **Encoder Hidden:** 256 (Bidirectional = 512)
+                - **Decoder Hidden:** 256
+                - **Embedding Dim:** 128
+                - **Vocabulary Size:** {meta['vocab_size']:,}
+                - **Acceleration Device:** `{meta['device'].upper()}`
+                - **Trained Epochs:** {meta['epoch']} (Prototype)
+                - **Final Validation Loss:** {meta['val_loss']:.4f}
+                """
+            )
+
+        st.markdown("---")
+        st.header("🎛️ Decoding & Inference")
+
+        decoding_strategy = st.radio(
+            "Decoding Strategy:",
+            options=["Greedy Decoding", "Beam Search"],
+            index=0,
+            help="Greedy selects the argmax token at each step. Beam Search maintains top hypotheses in parallel.",
+        )
+
+        beam_width = 4
+        length_penalty = 1.0
+        if decoding_strategy == "Beam Search":
+            beam_width = st.slider(
+                "Beam Width (k):",
+                min_value=2,
+                max_value=8,
+                value=4,
+                step=1,
+                help="Number of active hypothesis paths retained during beam expansion.",
+            )
+            length_penalty = st.slider(
+                "Length Penalty (α):",
+                min_value=0.2,
+                max_value=2.0,
+                value=1.0,
+                step=0.1,
+                help="Wu et al. length normalization exponent. α > 1.0 favors longer sequences.",
+            )
+
+        enable_trigram_blocking = st.checkbox(
+            "Enable Trigram Repetition Blocking",
+            value=False,
+            help="Suppresses candidate tokens that would complete an already emitted 3-gram to break repetitive loops.",
+        )
+
+        max_target_len = st.slider(
+            "Max Summary Length (tokens):",
+            min_value=20,
+            max_value=100,
+            value=60,
+            step=5,
+            help="Maximum sequence generation budget for the decoder.",
+        )
+
+        st.markdown("---")
+        st.subheader("⚠️ Important Notice")
+        st.markdown(
+            """
+            <small>
+            This model was trained as an academic prototype on <b>2,000 samples</b> for <b>3 epochs</b>.
+            It frequently outputs repetitive punctuation (e.g. <code>. . .</code>) or frequent stopwords.
+            <b>Beam Search and Trigram Blocking</b> reduce repetition loops, but do not replace full training.
+            This interface exposes the actual network output honestly without mock filters.
+            </small>
+            """,
+            unsafe_allow_html=True,
+        )
+
+        st.markdown("---")
+        st.markdown("<small>NNDL Neural Network Project — Stage 4B</small>", unsafe_allow_html=True)
+
+    # -------------------------------------------------------------------------
+    # Section 1: Project Overview
+    # -------------------------------------------------------------------------
+    with st.expander("📖 1. Project Overview & Architecture Design", expanded=False):
+        col_ov1, col_ov2 = st.columns([3, 2])
+        with col_ov1:
+            st.markdown(
+                """
+                ### Abstractive Summarization from Neural Primitives
+                This project builds a custom Sequence-to-Sequence (Seq2Seq) neural network from scratch in PyTorch,
+                operating without pretrained transformers or external tokenization libraries.
+                
+                **Key Pipeline Stages:**
+                1. **Data Preprocessing:** Smart regex punctuation isolation preserving decimals (`3.14`), currencies (`$100`), percentages (`15.5%`), and dates (`2026-08-21`).
+                2. **Custom Word-Level Tokenizer:** Built strictly from training articles with `<PAD>` (0), `<UNK>` (1), `<SOS>` (2), `<EOS>` (3).
+                3. **Bidirectional LSTM Encoder:** 256 forward + 256 backward units producing a 512-dimensional output sequence.
+                4. **Bahdanau Additive Attention:** Dynamic alignment with padding mask setting pad positions to `-1e9`.
+                5. **LSTM Decoder with 896-dim Projection:** Concatenates Decoder Hidden (256) + Attention Context (512) + Input Embedding (128) = 896 dimensions, projecting to 20,000 vocabulary logits.
+                """
+            )
+        with col_ov2:
+            st.markdown(
+                """
+                ### Trainable Parameter Breakdown
+                | Sub-Network | Layer Components | Trainable Parameters |
+                |---|---|---|
+                | **Encoder** | Embedding (2.56M) + BiLSTM (790k) + Projections (262k) | **3,613,184** |
+                | **Attention** | $W_{enc}$ (131k) + $W_{dec}$ (65k) + $v$ (256) | **196,864** |
+                | **Decoder** | Embedding (2.56M) + LSTM (919k) + Output Projection (17.94M) | **21,419,552** |
+                | **Total** | Full Seq2Seq Architecture | **25,229,600** |
+                """
+            )
+
+    # -------------------------------------------------------------------------
+    # Section 2: Article Input
+    # -------------------------------------------------------------------------
+    st.subheader("📰 2. Article Input")
+
+    selected_sample_key = st.selectbox(
+        "Choose a pre-curated test sample or enter your own article:",
+        list(SAMPLE_ARTICLES.keys()),
+        index=0,
+    )
+
+    # Invalidate stale generated summary state if the sample selection changed
+    if "current_sample_key" not in st.session_state:
+        st.session_state["current_sample_key"] = selected_sample_key
+    elif st.session_state["current_sample_key"] != selected_sample_key:
+        st.session_state["current_sample_key"] = selected_sample_key
+        clear_generated_summary_state()
+
+    default_article = SAMPLE_ARTICLES[selected_sample_key]["article"]
+    default_reference = SAMPLE_ARTICLES[selected_sample_key]["reference"]
+
+    col_in1, col_in2 = st.columns([3, 2])
+
+    with col_in1:
+        article_text = st.text_area(
+            "Source Article (News Document):",
+            value=default_article,
+            height=200,
+            placeholder="Paste raw article text here...",
+            help="Articles exceeding 500 tokens will be safely truncated during encoder embedding.",
+        )
+
+    with col_in2:
+        reference_text = st.text_area(
+            "Reference Summary (Optional Ground Truth):",
+            value=default_reference,
+            height=200,
+            placeholder="(Optional) Paste human reference summary to calculate ROUGE metrics...",
+            help="If supplied, ROUGE-1, ROUGE-2, and ROUGE-L will be evaluated against this reference.",
+        )
+
+    # Invalidate stale generated summary state if user modified article or reference text after generation
+    if "last_article" in st.session_state and (
+        st.session_state["last_article"].strip() != article_text.strip()
+        or st.session_state.get("last_reference", "").strip() != reference_text.strip()
+    ):
+        clear_generated_summary_state()
+
+    # Input validation and statistics
+    raw_tokens = tokenize(article_text)
+    word_count = len(article_text.split())
+    token_count = len(raw_tokens)
+
+    st.markdown(
+        f"<small><b>Source Statistics:</b> {word_count} words | {token_count} tokens "
+        f"(Model Limit: 500 tokens). "
+        f"{'<span style=\"color:#b45309;\">⚠️ Note: Article exceeds 500 tokens and will be truncated to 500 tokens.</span>' if token_count > 500 else '<span style=\"color:#15803d;\">✅ Fits within 500-token limit.</span>'}"
+        f"</small>",
+        unsafe_allow_html=True,
+    )
+
+    generate_button = st.button("🚀 Generate Summary", type="primary", use_container_width=False)
+
+    # -------------------------------------------------------------------------
+    # Section 3: Summary Generation & Inference
+    # -------------------------------------------------------------------------
+    st.subheader("⚡ 3. Summary Generation")
+
+    if generate_button:
+        # 1. Input Validation
+        if not article_text or not article_text.strip():
+            st.error("❌ Validation Error: Please provide a non-empty article text before generating.")
+            return
+
+        if model is None or vocab is None:
+            st.error(f"❌ Execution Blocked: {load_error}")
+            return
+
+        strategy_param = "beam_search" if decoding_strategy == "Beam Search" else "greedy"
+        ngram_param = 3 if enable_trigram_blocking else 0
+
+        with st.spinner(f"Encoding source document and generating summary ({decoding_strategy})..."):
+            try:
+                # Prepare source tensor
+                max_source_len = 500
+                src_tokens = raw_tokens[:max_source_len]
+                src_indices = vocab.encode(src_tokens)
+
+                if len(src_indices) < max_source_len:
+                    src_indices = src_indices + [PAD_IDX] * (max_source_len - len(src_indices))
+
+                src_tensor = torch.tensor(src_indices, dtype=torch.long)
+
+                # Execute summary generation with configured inference options
+                with torch.no_grad():
+                    gen_summary, gen_token_ids, attn_matrix = model.generate_summary(
+                        src_tensor=src_tensor,
+                        vocab=vocab,
+                        max_target_len=max_target_len,
+                        device=device,
+                        strategy=strategy_param,
+                        beam_width=beam_width,
+                        no_repeat_ngram_size=ngram_param,
+                        length_penalty=length_penalty,
+                    )
+
+                # Save run state to session
+                st.session_state["gen_summary"] = gen_summary
+                st.session_state["gen_token_ids"] = gen_token_ids
+                st.session_state["attn_matrix"] = attn_matrix
+                st.session_state["src_tokens"] = src_tokens
+                st.session_state["last_article"] = article_text
+                st.session_state["last_reference"] = reference_text
+                st.session_state["used_strategy"] = decoding_strategy
+                st.session_state["used_beam_width"] = beam_width if strategy_param == "beam_search" else None
+                st.session_state["used_trigram_blocking"] = enable_trigram_blocking
+                st.session_state["used_length_penalty"] = length_penalty if strategy_param == "beam_search" else None
+
+            except Exception as e:
+                st.error(f"❌ Runtime Inference Error: {str(e)}")
+                return
+
+    # Check if we have results in session state
+    if "gen_summary" in st.session_state:
+        gen_summary = st.session_state["gen_summary"]
+        gen_token_ids = st.session_state["gen_token_ids"]
+        attn_matrix = st.session_state["attn_matrix"]
+        src_tokens = st.session_state["src_tokens"]
+        curr_article = st.session_state.get("last_article", article_text)
+        curr_reference = st.session_state.get("last_reference", reference_text)
+
+        # Word count stats
+        gen_words = len(gen_summary.split())
+        gen_tokens_count = len(gen_token_ids)
+
+        # Display Honest Checkpoint Warning
+        st.markdown(
+            """
+            <div class="info-notice">
+            <b>Prototype Model Notice:</b> The output below is produced by <code>models/best_model.pt</code> 
+            (trained for 3 epochs on 2,000 samples). As established in the repository audit, the current checkpoint 
+            exhibits high validation perplexity and greedy decoding trapping.
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
+        # Degenerate Output Detection
+        gen_token_words = [vocab.idx2word.get(idx, "<UNK>") for idx in gen_token_ids]
+        is_degenerate, degen_msg = detect_degenerate_output(gen_token_words)
+
+        if is_degenerate:
+            st.markdown(
+                f"""
+                <div class="degenerate-warning">
+                <b>⚠️ Degenerate Generation Flag:</b> {degen_msg}<br>
+                <small>The model output exhibits repetitive token loops. Using Beam Search with Trigram Blocking in the sidebar helps mitigate this pattern.</small>
+                </div>
+                """,
+                unsafe_allow_html=True,
+            )
+
+        # Generated Summary Box
+        st.markdown("#### Generated Summary Output:")
+        st.info(gen_summary if gen_summary else "<EMPTY SEQUENCE GENERATED>")
+
+        used_strat = st.session_state.get("used_strategy", "Greedy Decoding")
+        strat_details = [f"Strategy: **{used_strat}**"]
+        if used_strat == "Beam Search":
+            strat_details.append(f"Beam Width: **{st.session_state.get('used_beam_width', 4)}**")
+            strat_details.append(f"Length Penalty α: **{st.session_state.get('used_length_penalty', 1.0):.1f}**")
+        if st.session_state.get("used_trigram_blocking", False):
+            strat_details.append("Trigram Blocking: **Active**")
+        strat_str = " | ".join(strat_details)
+
+        st.caption(
+            f"Summary Length: **{gen_words} words** ({gen_tokens_count} tokens) | "
+            f"Source Length: **{len(curr_article.split())} words** | "
+            f"{strat_str} | "
+            f"Checkpoint: `models/best_model.pt` | Device: `{str(device).upper()}`"
+        )
+
+        # ---------------------------------------------------------------------
+        # Section 4: Evaluation Results
+        # ---------------------------------------------------------------------
+        st.subheader("📊 4. Multi-Metric Grounding & Quality Evaluation")
+
+        tab_rouge, tab_entities, tab_numeric = st.tabs([
+            "ROUGE Overlap Metrics",
+            "Named Entity Preservation",
+            "Numeric & Factual Overlap Heuristic",
+        ])
+
+        # TAB 1: ROUGE Metrics
+        with tab_rouge:
+            if curr_reference and curr_reference.strip():
+                st.markdown(
+                    """
+                    <small><b>Note on ROUGE Normalization:</b> Standalone punctuation tokens (<code>.</code>, <code>,</code>) 
+                    are excluded from n-gram matching so repetitive punctuation does not artificially inflate scores.</small>
+                    """,
+                    unsafe_allow_html=True,
+                )
+                rouge_res = evaluate_summary(gen_summary, curr_reference, exclude_punctuation=True)
+
+                r_col1, r_col2, r_col3 = st.columns(3)
+                with r_col1:
+                    st.metric(
+                        "ROUGE-1 F1 (Unigram)",
+                        f"{rouge_res['rouge1']['f1']:.4f}",
+                        help=f"Precision: {rouge_res['rouge1']['precision']:.4f} | Recall: {rouge_res['rouge1']['recall']:.4f}",
+                    )
+                with r_col2:
+                    st.metric(
+                        "ROUGE-2 F1 (Bigram)",
+                        f"{rouge_res['rouge2']['f1']:.4f}",
+                        help=f"Precision: {rouge_res['rouge2']['precision']:.4f} | Recall: {rouge_res['rouge2']['recall']:.4f}",
+                    )
+                with r_col3:
+                    st.metric(
+                        "ROUGE-L F1 (LCS)",
+                        f"{rouge_res['rougel']['f1']:.4f}",
+                        help=f"Precision: {rouge_res['rougel']['precision']:.4f} | Recall: {rouge_res['rougel']['recall']:.4f}",
+                    )
+
+                st.caption(
+                    "ROUGE scores compare the generated text against the single supplied human reference. "
+                    "They measure surface lexical overlap, not holistic factual correctness."
+                )
+            else:
+                st.warning("ℹ️ Reference summary was not provided. ROUGE overlap metrics require a ground-truth reference summary.")
+
+        # TAB 2: Entity Preservation
+        with tab_entities:
+            entity_eval = evaluate_entity_preservation(curr_article, gen_summary)
+
+            e_col1, e_col2, e_col3, e_col4 = st.columns(4)
+
+            p_val = f"{entity_eval['entity_precision']:.4f}" if entity_eval['entity_precision'] is not None else "N/A"
+            r_val = f"{entity_eval['entity_recall']:.4f}" if entity_eval['entity_recall'] is not None else "N/A"
+            pres_val = f"{entity_eval['entity_preservation_rate']:.4f}" if entity_eval['entity_preservation_rate'] is not None else "N/A"
+            f1_val = f"{entity_eval['entity_f1']:.4f}" if entity_eval['entity_f1'] is not None else "N/A"
+
+            with e_col1:
+                st.metric("Entity Precision (Groundedness)", p_val, help="Proportion of summary entities present in source.")
+            with e_col2:
+                st.metric("Entity Recall (Distinct Coverage)", r_val, help="Proportion of unique source entities captured.")
+            with e_col3:
+                st.metric("Preservation Rate (Mention-Weighted)", pres_val, help="Weighted proportion of source entity mentions preserved.")
+            with e_col4:
+                st.metric("Entity F1 Score", f1_val, help="Harmonic mean of precision and recall.")
+
+            st.markdown(f"**Entity Status:** `{entity_eval['status']}` — *{entity_eval['status_description']}*")
+
+            col_ent_det1, col_ent_det2, col_ent_det3 = st.columns(3)
+            with col_ent_det1:
+                st.markdown(f"**Preserved Entities ({entity_eval['num_preserved_entities']}):**")
+                st.write(entity_eval["preserved_entities"] if entity_eval["preserved_entities"] else "None")
+            with col_ent_det2:
+                st.markdown(f"**Extra / Hallucinated Entities ({len(entity_eval['extra_entities'])}):**")
+                st.write(entity_eval["extra_entities"] if entity_eval["extra_entities"] else "None")
+            with col_ent_det3:
+                st.markdown(f"**Missing Source Entities ({len(entity_eval['missing_entities'])}):**")
+                st.write(entity_eval["missing_entities"][:10] if entity_eval["missing_entities"] else "None")
+
+        # TAB 3: Numeric Consistency
+        with tab_numeric:
+            num_eval = evaluate_numeric_consistency(curr_article, gen_summary)
+
+            n_col1, n_col2, n_col3 = st.columns(3)
+            num_rate_str = f"{num_eval['numeric_consistency_rate']:.4f}" if num_eval['numeric_consistency_rate'] is not None else "N/A"
+
+            with n_col1:
+                st.metric("Numeric Overlap Rate", num_rate_str, help="Proportion of summary numbers present in source text.")
+            with n_col2:
+                st.metric("Source Numbers Count", num_eval["total_source_numbers"])
+            with n_col3:
+                st.metric("Summary Numbers Count", num_eval["total_summary_numbers"])
+
+            st.markdown(f"**Evaluation Status:** `{num_eval['status']}` — *{num_eval['status_description']}*")
+
+            col_num_det1, col_num_det2 = st.columns(2)
+            with col_num_det1:
+                st.markdown(f"**Consistent Numbers Found ({len(num_eval['consistent_numbers'])}):**")
+                st.write(num_eval["consistent_numbers"] if num_eval["consistent_numbers"] else "None")
+            with col_num_det2:
+                st.markdown(f"**Hallucinated / Ungrounded Numbers ({len(num_eval['hallucinated_numbers'])}):**")
+                st.write(num_eval["hallucinated_numbers"] if num_eval["hallucinated_numbers"] else "None")
+
+            st.caption(
+                "⚠️ Disclaimer: Numeric overlap is a surface-level regex heuristic checking whether generated numbers appear in the source. "
+                "It does not verify relationship attribution or holistic factual accuracy."
+            )
+
+        # ---------------------------------------------------------------------
+        # Section 5: Attention Visualization
+        # ---------------------------------------------------------------------
+        st.subheader("🔍 5. Bahdanau Attention Alignment Heatmap")
+        with st.expander("Show Attention Weights Heatmap", expanded=False):
+            if attn_matrix is not None and attn_matrix.numel() > 0 and len(gen_token_words) > 0:
+                fig = plot_attention_heatmap(attn_matrix, src_tokens, gen_token_words[:25], max_src_display=30)
+                st.pyplot(fig)
+                st.caption(
+                    "The heatmap visualizes additive alignment scores across decoding steps (Y-axis) "
+                    "relative to the first 30 source tokens (X-axis). Padding tokens have been excluded."
+                )
+            else:
+                st.info("No attention weights available for this generation.")
+    else:
+        st.info("ℹ️ Select or edit an article above and click **🚀 Generate Summary** to run the Seq2Seq summarizer.")
+
+    # -------------------------------------------------------------------------
+    # Section 6: Limitations and Current Training Status
+    # -------------------------------------------------------------------------
+    st.subheader("⚠️ 6. Limitations and Current Training Status")
+    st.markdown(
+        """
+        - **Training Scale:** The model was trained on a small prototype subset (**2,000 articles** out of 287,113 available in CNN/DailyMail) across **3 epochs**.
+        - **Convergence State:** Final validation loss reached **6.8798** (corresponding to perplexity ~972), which explains why greedy decoding frequently enters repetitive stopword or punctuation loops.
+        - **Inference Decoding Options:** Configurable Greedy Decoding and Beam Search (k=2–8) with optional Trigram Repetition Blocking are available in the sidebar. While Beam Search and n-gram blocking effectively suppress repetition loops, they cannot substitute for full-scale training on the complete dataset.
+        - **Hardware:** Prototype trained on Apple Silicon MPS in 18.82 minutes. Scaling to the full dataset requires distributed multi-GPU training.
+        """
+    )
+
+
+if __name__ == "__main__":
+    main()

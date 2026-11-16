@@ -1,0 +1,56 @@
+{
+  "summary_table": [
+    {
+      "key": "t5_zero_shot",
+      "name": "T5-small (Zero-Shot)",
+      "parameters": 60506624,
+      "n": 100,
+      "rouge1_f1": 0.3203,
+      "rouge2_f1": 0.1361,
+      "rougel_f1": 0.2312,
+      "avg_words": 42.5,
+      "avg_tokens": 65.3,
+      "avg_latency_ms": 1786.8
+    },
+    {
+      "key": "t5_finetuned",
+      "name": "T5-small (Fine-Tuned)",
+      "parameters": 60506624,
+      "n": 100,
+      "rouge1_f1": 0.3447,
+      "rouge2_f1": 0.1492,
+      "rougel_f1": 0.2499,
+      "avg_words": 41.2,
+      "avg_tokens": 64.4,
+      "avg_latency_ms": 1526.5
+    },
+    {
+      "key": "distilbart",
+      "name": "DistilBART-CNN-12-6 (Pretrained)",
+      "parameters": 305510400,
+      "n": 100,
+      "rouge1_f1": 0.3871,
+      "rouge2_f1": 0.1889,
+      "rougel_f1": 0.2808,
+      "avg_words": 58.9,
+      "avg_tokens": 74.2,
+      "avg_latency_ms": 5576.7
+    },
+    {
+      "key": "custom_seq2seq",
+      "name": "Custom Seq2Seq BiLSTM (Beam k=4 + Trigram Block)",
+      "parameters": 25229600,
+      "n": 100,
+      "rouge1_f1": 0.1204,
+      "rouge2_f1": 0.004,
+      "rougel_f1": 0.1055,
+      "avg_words": 31.0,
+      "avg_tokens": 33.2,
+      "avg_latency_ms": 1180.0
+    }
+  ],
+  "improved": true,
+  "t5_zs_rl": 0.2312,
+  "t5_ft_rl": 0.2499,
+  "timestamp": 1793478938.2556732
+}

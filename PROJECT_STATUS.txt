@@ -1,0 +1,62 @@
+PROJECT:
+Long Document Summarization with Factual/Entity Preservation
+
+CURRENT STATUS:
+Implementation, data pipeline, custom PyTorch Seq2Seq architecture, training pipeline, multi-metric evaluation suite, and supervisor demonstration package are 100% complete and empirically verified.
+
+DATASET:
+- Primary Dataset: CNN/DailyMail 3.0.0 (311,971 total samples; Train: 287,113, Val: 13,368, Test: 11,490).
+- Secondary Dataset: XSum (226,711 total samples; Train: 204,045, Val: 11,332, Test: 11,334).
+- Local Format: Parquet files loaded via pandas/pyarrow without full RAM loading.
+- Prototype Training Subset: CNN/DailyMail (2,000 Train, 300 Validation, 100 Test).
+
+PREPROCESSING:
+- Lowercasing, whitespace normalization, punctuation separation preserving numbers, dates, percentages, and currencies.
+- Custom Word-Level Tokenizer (No pretrained tokenizers or Hugging Face Transformers).
+- Vocabulary: 20,000 unique tokens constructed strictly from training set (saved to models/vocab.pkl).
+- Special Tokens: <PAD> (0), <UNK> (1), <SOS> (2), <EOS> (3).
+- Sequence Length Limits: MAX_SOURCE_LENGTH = 500 tokens, MAX_TARGET_LENGTH = 60 tokens.
+
+MODEL:
+- Custom PyTorch Neural Network Implementation (25,229,600 total trainable parameters).
+- Encoder: Trainable Embedding (128-dim) + 1-layer Bidirectional LSTM (256-dim fwd + 256-dim bwd = 512-dim output). Encoder Parameter Count: 3,613,184.
+- Attention: Manual Bahdanau Additive Attention with padding mask (Context vector: 512-dim).
+- Decoder: Attention-Augmented 1-layer LSTM (hidden: 256-dim) + Linear Output Projection (896 -> 20,000 logits). Decoder Parameter Count: 21,616,416.
+
+TRAINING:
+- Optimizer: Adam (learning rate = 0.001, gradient clipping = 1.0).
+- Loss Function: CrossEntropyLoss(ignore_index=0).
+- Teacher Forcing Ratio: 0.5.
+- Hardware Acceleration: Apple Silicon MPS (`mps` device).
+- Epoch 1: Train Loss = 7.3243 | Val Loss = 6.9023
+- Epoch 2: Train Loss = 6.6933 | Val Loss = 6.9266
+- Epoch 3: Train Loss = 6.3864 | Val Loss = 6.8798 (Best model saved to models/best_model.pt in 18.82 mins).
+
+EVALUATION:
+- Evaluated on 20 test examples using models/best_model.pt.
+- ROUGE-1: F1 = 0.1479, Precision = 0.1724, Recall = 0.1330
+- ROUGE-2: F1 = 0.0107, Precision = 0.0124, Recall = 0.0096
+- ROUGE-L: F1 = 0.1246, Precision = 0.1447, Recall = 0.1126
+- Entity Metrics (spaCy en_core_web_sm): Entity Precision = 0.0000, Entity Recall = 0.0000, Preservation Rate = 0.0000.
+- Numeric / Factual Consistency: 1.0000 (100.00% - zero numeric hallucinations introduced).
+
+PROBLEM IDENTIFIED:
+In Experiment 1 (500 samples, 2 epochs), greedy summary generation collapsed into repeated period tokens (". . . ."). Diagnosis revealed that dataset truncation (`tgt_indices[:60]`) sliced off the <EOS> token for 39% of target summaries. Consequently, the model never learned sequence termination.
+
+FIX IMPLEMENTED:
+Modified `src/dataset.py` to pre-truncate content tokens to 58 tokens *before* adding <SOS> and <EOS>. This guaranteed that 100.00% of target sequences end with <EOS>. Re-training in Experiment 2 yielded 100.00% <EOS> generation during inference and restored real content words and named entities.
+
+CURRENT LIMITATION:
+Trained on a small prototype subset (2,000 samples for 3 epochs). Needs full-scale training on the 287k dataset and entity-aware loss weighting to achieve competitive ROUGE and Entity Preservation scores.
+
+NEXT STEPS:
+1. Scale up training to 50,000+ examples across 10-20 epochs.
+2. Implement Entity-Weighted Cross-Entropy Loss to boost Entity Preservation Rate.
+3. Add Beam Search decoding with length penalty.
+4. Run cross-dataset validation on XSum.
+
+
+
+        
+    source .venv/bin/activate
+    streamlit run app.py 

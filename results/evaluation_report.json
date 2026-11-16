@@ -1,0 +1,1455 @@
+{
+    "num_test_examples": 20,
+    "overall_averages": {
+        "rouge1_f1": 0.14790986072225248,
+        "rouge1_precision": 0.1723731704172546,
+        "rouge1_recall": 0.1329808863102132,
+        "rouge2_f1": 0.010684387985959953,
+        "rouge2_precision": 0.012430128796446437,
+        "rouge2_recall": 0.009620836254688164,
+        "rougel_f1": 0.12464806313936935,
+        "rougel_precision": 0.14470328569955518,
+        "rougel_recall": 0.11263730231462468,
+        "entity_precision": 0.0,
+        "entity_recall": 0.0,
+        "entity_preservation_rate": 0.0,
+        "numeric_consistency_rate": 1.0
+    },
+    "per_example_results": [
+        {
+            "example_index": 1,
+            "id": "58aefdc7ca85968aa11e16ea4099506cb474f759",
+            "source_snippet": "Down Augusta way they say the azaleas are in full bloom, which is more than can be said for England\u2019s Justin Rose. A bruising Florida swing last month saw the Englishman fall outsi...",
+            "reference_summary": "Justin Rose bounced back from Florida misery by carding 69 in Houston .\nThree-time Masters champion Phil Mickelson enjoyed return to form .\nPaul Casey celebrated last-gasp Masters invitation with fine round of 68 .",
+            "generated_summary": "the has been a to the in the . . the . the the . the the . the the . the the . the the . the the . the the . the the . the . the the .",
+            "rouge1": {
+                "precision": 0.12195121951219512,
+                "recall": 0.1282051282051282,
+                "f1": 0.125
+            },
+            "rouge2": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0
+            },
+            "rougel": {
+                "precision": 0.0975609756097561,
+                "recall": 0.10256410256410256,
+                "f1": 0.1
+            },
+            "entity_metrics": {
+                "entity_precision": 0.0,
+                "entity_recall": 0.0,
+                "entity_preservation_rate": 0.0,
+                "num_source_entities": 54,
+                "num_summary_entities": 0,
+                "num_preserved_entities": 0,
+                "preserved_entities": [],
+                "missing_entities": [
+                    "10",
+                    "100 per cent",
+                    "13",
+                    "14",
+                    "17",
+                    "18",
+                    "2007",
+                    "34-year-old",
+                    "63",
+                    "66",
+                    "68",
+                    "69",
+                    "72",
+                    "a big week",
+                    "a day",
+                    "american scott piercy",
+                    "augusta",
+                    "down augusta",
+                    "england\u2019s justin rose",
+                    "every year",
+                    "five",
+                    "florida",
+                    "four",
+                    "jordan spieth",
+                    "justin rose",
+                    "last monday",
+                    "last month",
+                    "last week",
+                    "lee westwood",
+                    "mickelson",
+                    "months",
+                    "nine",
+                    "one",
+                    "padraig harrington",
+                    "paul casey",
+                    "pga tour",
+                    "phil mickelson",
+                    "rose",
+                    "shell houston open",
+                    "six",
+                    "the end of the year",
+                    "the first half",
+                    "the last three years",
+                    "the past two weeks",
+                    "the shell houston open",
+                    "the sixties",
+                    "the years",
+                    "this year",
+                    "those good weeks",
+                    "three",
+                    "thursday",
+                    "two",
+                    "weeks",
+                    "years"
+                ],
+                "extra_entities": []
+            },
+            "numeric_metrics": {
+                "numeric_consistency_rate": 1.0,
+                "total_source_numbers": 13,
+                "total_summary_numbers": 0,
+                "consistent_numbers": [],
+                "hallucinated_numbers": []
+            }
+        },
+        {
+            "example_index": 2,
+            "id": "8c2e48d24a3e2cf1be5d242f09ae34bf68ccbd6e",
+            "source_snippet": "There was no special treatment for Lewis Ferguson at Paul Nicholls\u2019 yard on Thursday morning. The 18-year-old was mucking out the stables as usual, just a cut on the nose to show f...",
+            "reference_summary": "Lewis Ferguson fell from Merrion Square at Wincanton on Wednesday .\nDespite spectacular tumble he escaped with just a cut nose .\nFerguson has been mucking out stables as usual on Thursday morning .\nThe 18-year-old says incident that went viral was 'just a blur' to him .",
+            "generated_summary": "the , , , was the in the . . . the . the . the the . the . the . the . the . the . the . the . the . the .",
+            "rouge1": {
+                "precision": 0.16666666666666666,
+                "recall": 0.1111111111111111,
+                "f1": 0.13333333333333333
+            },
+            "rouge2": {
+                "precision": 0.02857142857142857,
+                "recall": 0.018867924528301886,
+                "f1": 0.022727272727272724
+            },
+            "rougel": {
+                "precision": 0.1388888888888889,
+                "recall": 0.09259259259259259,
+                "f1": 0.11111111111111112
+            },
+            "entity_metrics": {
+                "entity_precision": 0.0,
+                "entity_recall": 0.0,
+                "entity_preservation_rate": 0.0,
+                "num_source_entities": 19,
+                "num_summary_entities": 0,
+                "num_preserved_entities": 0,
+                "preserved_entities": [],
+                "missing_entities": [
+                    "18",
+                    "18-year-old",
+                    "4.20",
+                    "4.20pm",
+                    "a few hundred",
+                    "aintree",
+                    "barry johnson",
+                    "borders",
+                    "ferguson",
+                    "ferguson\u2019s",
+                    "hundreds of thousands",
+                    "jockey ferguson",
+                    "jockey lewis ferguson",
+                    "lewis ferguson",
+                    "paul nicholls",
+                    "the fall",
+                    "thursday",
+                    "wednesday",
+                    "wincanton"
+                ],
+                "extra_entities": []
+            },
+            "numeric_metrics": {
+                "numeric_consistency_rate": 1.0,
+                "total_source_numbers": 3,
+                "total_summary_numbers": 0,
+                "consistent_numbers": [],
+                "hallucinated_numbers": []
+            }
+        },
+        {
+            "example_index": 3,
+            "id": "16269bfc102681f55a7fbfb6e26c7a52d982e09c",
+            "source_snippet": "When emergency crews received a call saying 'someone' had been knocked down by a car in Essex, they immediately sent two ambulances to the rescue. But the vehicles returned to base...",
+            "reference_summary": "Woman reported 'someone' had been run over, but victim was a squirrel .\nAnother man dialled 999 to say he dropped a burger which was 'bleeding'\nEast of England ambulance service warned hoax calls can cost lives .",
+            "generated_summary": "douglas carswell , , , , , , , , , . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .",
+            "rouge1": {
+                "precision": 0.07317073170731707,
+                "recall": 0.06976744186046512,
+                "f1": 0.07142857142857142
+            },
+            "rouge2": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0
+            },
+            "rougel": {
+                "precision": 0.07317073170731707,
+                "recall": 0.06976744186046512,
+                "f1": 0.07142857142857142
+            },
+            "entity_metrics": {
+                "entity_precision": 0.0,
+                "entity_recall": 0.0,
+                "entity_preservation_rate": 0.0,
+                "num_source_entities": 18,
+                "num_summary_entities": 1,
+                "num_preserved_entities": 0,
+                "preserved_entities": [],
+                "missing_entities": [
+                    "1,248",
+                    "999",
+                    "almost half",
+                    "around 2,500",
+                    "basildon",
+                    "chelmsford",
+                    "east of england",
+                    "england",
+                    "epping forest",
+                    "essex",
+                    "gary morgan",
+                    "half",
+                    "hertfordshire",
+                    "hitchin",
+                    "one",
+                    "peterborough",
+                    "the last two years",
+                    "two"
+                ],
+                "extra_entities": [
+                    "douglas carswell"
+                ]
+            },
+            "numeric_metrics": {
+                "numeric_consistency_rate": 1.0,
+                "total_source_numbers": 5,
+                "total_summary_numbers": 0,
+                "consistent_numbers": [],
+                "hallucinated_numbers": []
+            }
+        },
+        {
+            "example_index": 4,
+            "id": "18514a002a1a244a68a560c63c4471af98f72a73",
+            "source_snippet": "A loving boyfriend has granted his girlfriend her birthday wish of having their wedding photographs taken - even though they can't officially get married yet because she is bedridd...",
+            "reference_summary": "Guo Kai and girlfriend Dong Hui, 22, had planned to get married this month .\nBut ceremony had to be postponed after Dong was admitted to hospital .\nInstead Guo arranged for photographers to go to the ward on her birthday .\nFamily and friends helped Dong get into her dream wedding dress .",
+            "generated_summary": "caroline wozniacki , , , , , , , her daughter , her . . . her . . her daughter , her . . her daughter , her . . her . . . her daughter , her . . . her daughter , and her . . .",
+            "rouge1": {
+                "precision": 0.18,
+                "recall": 0.16071428571428573,
+                "f1": 0.16981132075471697
+            },
+            "rouge2": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0
+            },
+            "rougel": {
+                "precision": 0.18,
+                "recall": 0.16071428571428573,
+                "f1": 0.16981132075471697
+            },
+            "entity_metrics": {
+                "entity_precision": 0.0,
+                "entity_recall": 0.0,
+                "entity_preservation_rate": 0.0,
+                "num_source_entities": 17,
+                "num_summary_entities": 1,
+                "num_preserved_entities": 0,
+                "preserved_entities": [],
+                "missing_entities": [
+                    "2008",
+                    "22",
+                    "24",
+                    "a year ago",
+                    "china",
+                    "dong",
+                    "dong hui",
+                    "guo",
+                    "guo kai",
+                    "last month",
+                    "last year",
+                    "monday",
+                    "overwhelmed",
+                    "sichuan",
+                    "the people's daily online",
+                    "this month",
+                    "three"
+                ],
+                "extra_entities": [
+                    "caroline wozniacki"
+                ]
+            },
+            "numeric_metrics": {
+                "numeric_consistency_rate": 1.0,
+                "total_source_numbers": 3,
+                "total_summary_numbers": 0,
+                "consistent_numbers": [],
+                "hallucinated_numbers": []
+            }
+        },
+        {
+            "example_index": 5,
+            "id": "9efbe27504b041e7f5e846a3c6898702c0e82427",
+            "source_snippet": "(CNN)Sunday's announcement that Corinthian Colleges Inc. would shut down all of its remaining 28 campuses is a positive development in a long struggle to hold for-profit colleges a...",
+            "reference_summary": "David Wheeler: Corinthian, considered a \"predator\" school, will shut down campuses .\nWheeler: Students of for-profit colleges are hapless victims; their debts should be forgiven .",
+            "generated_summary": "new : the is s , , . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .",
+            "rouge1": {
+                "precision": 0.09615384615384616,
+                "recall": 0.14285714285714285,
+                "f1": 0.1149425287356322
+            },
+            "rouge2": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0
+            },
+            "rougel": {
+                "precision": 0.09615384615384616,
+                "recall": 0.14285714285714285,
+                "f1": 0.1149425287356322
+            },
+            "entity_metrics": {
+                "entity_precision": 0.0,
+                "entity_recall": 0.0,
+                "entity_preservation_rate": 0.0,
+                "num_source_entities": 51,
+                "num_summary_entities": 0,
+                "num_preserved_entities": 0,
+                "preserved_entities": [],
+                "missing_entities": [
+                    "$1 trillion",
+                    "$10 million",
+                    "100",
+                    "100%",
+                    "2011",
+                    "2013",
+                    "2014",
+                    "28",
+                    "33,000",
+                    "37,000",
+                    "86%",
+                    "95",
+                    "about 1.3 million",
+                    "about 213,000",
+                    "arne duncan",
+                    "around 60%",
+                    "career education corp.",
+                    "cnn)sunday",
+                    "corinthian colleges inc.",
+                    "department of education",
+                    "editor",
+                    "education department",
+                    "half",
+                    "hundreds",
+                    "last summer",
+                    "last year",
+                    "millions of dollars",
+                    "more than 70,000",
+                    "multibillion-dollar",
+                    "nearly half",
+                    "new york",
+                    "no fewer than 36",
+                    "one",
+                    "only 13%",
+                    "propublica",
+                    "san diego",
+                    "slate",
+                    "sunday",
+                    "tens of billions of dollars",
+                    "tens of thousands",
+                    "the education department",
+                    "the government accountability office",
+                    "the new york times",
+                    "the past two months",
+                    "the u.s. department of education",
+                    "the united states",
+                    "the university of phoenix",
+                    "three years",
+                    "uncle sam",
+                    "uncle sam's",
+                    "years"
+                ],
+                "extra_entities": []
+            },
+            "numeric_metrics": {
+                "numeric_consistency_rate": 1.0,
+                "total_source_numbers": 24,
+                "total_summary_numbers": 0,
+                "consistent_numbers": [],
+                "hallucinated_numbers": []
+            }
+        },
+        {
+            "example_index": 6,
+            "id": "56941fcf624a88a5f670a1de1c0688467158b2c5",
+            "source_snippet": "Boston (CNN)The Boston Marathon is traditionally an event in which people in and around the Massachusetts capital come together, celebrate and enjoy. But not in 2013, when three pe...",
+            "reference_summary": "Dzhokhar Tsarnaev was found guilty of all 30 counts, may face death penalty .\nThe sentencing phase starts April 21; a judge predicts it will last four weeks .\nHe warns jurors not to do anything that could be prejudicial to the case .",
+            "generated_summary": "the , , , , , , , in the . . . . the . . the . the . the . the . . the . . the . . the . . the . . . the . . . the . .",
+            "rouge1": {
+                "precision": 0.13043478260869565,
+                "recall": 0.13043478260869565,
+                "f1": 0.13043478260869565
+            },
+            "rouge2": {
+                "precision": 0.022222222222222223,
+                "recall": 0.022222222222222223,
+                "f1": 0.022222222222222223
+            },
+            "rougel": {
+                "precision": 0.13043478260869565,
+                "recall": 0.13043478260869565,
+                "f1": 0.13043478260869565
+            },
+            "entity_metrics": {
+                "entity_precision": 0.0,
+                "entity_recall": 0.0,
+                "entity_preservation_rate": 0.0,
+                "num_source_entities": 32,
+                "num_summary_entities": 0,
+                "num_preserved_entities": 0,
+                "preserved_entities": [],
+                "missing_entities": [
+                    "2013",
+                    "30",
+                    "92",
+                    "aaron cooper",
+                    "alexandra field",
+                    "ann o'neill",
+                    "april 21",
+                    "boston",
+                    "catherine e. shoichet",
+                    "clarke",
+                    "cnn",
+                    "cnn)the boston marathon",
+                    "days",
+                    "dzhokhar tsarnaev",
+                    "four",
+                    "four days",
+                    "george a. o'toole",
+                    "jason hanna",
+                    "judy clarke",
+                    "kevin conlon",
+                    "last four weeks",
+                    "march 4",
+                    "massachusetts",
+                    "o'toole",
+                    "over 200",
+                    "steve almasy",
+                    "tamerlan tsarnaev",
+                    "this year",
+                    "three",
+                    "tsarnaev",
+                    "tuesday",
+                    "year"
+                ],
+                "extra_entities": []
+            },
+            "numeric_metrics": {
+                "numeric_consistency_rate": 1.0,
+                "total_source_numbers": 8,
+                "total_summary_numbers": 0,
+                "consistent_numbers": [],
+                "hallucinated_numbers": []
+            }
+        },
+        {
+            "example_index": 7,
+            "id": "f2585a9406b45744f8c8bd6fec5c5803113d92d7",
+            "source_snippet": "Vowing to cling on: Liberal Democrats leader Nick Clegg makes a speech during a General Election campaign visit to Sutton in south London yesterday . Nick Clegg yesterday vowed to ...",
+            "reference_summary": "Sources claimed he'd go if Lib Dems are reduced to fewer than 30 MPs .\nBut yesterday insisted he would fight for his job 'in all circumstances'\nWarned of 'very real risk we undo all the hard work over last five years'\nVince Cable hopes to be Chancellor if Lib Dems form another coalition .",
+            "generated_summary": "the ' s ' s ' s ' s . . . the . the . the . the . the . the . the . the . the . the . the . the .",
+            "rouge1": {
+                "precision": 0.19444444444444445,
+                "recall": 0.11475409836065574,
+                "f1": 0.14432989690721648
+            },
+            "rouge2": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0
+            },
+            "rougel": {
+                "precision": 0.16666666666666666,
+                "recall": 0.09836065573770492,
+                "f1": 0.12371134020618557
+            },
+            "entity_metrics": {
+                "entity_precision": 0.0,
+                "entity_recall": 0.0,
+                "entity_preservation_rate": 0.0,
+                "num_source_entities": 20,
+                "num_summary_entities": 0,
+                "num_preserved_entities": 0,
+                "preserved_entities": [],
+                "missing_entities": [
+                    "cheam",
+                    "clegg",
+                    "conservative party",
+                    "fewer than 30",
+                    "five years",
+                    "general election",
+                    "lib dems",
+                    "liberal",
+                    "london",
+                    "nick clegg",
+                    "parliament",
+                    "paul burstow",
+                    "seven or eight years",
+                    "sky news",
+                    "sutton",
+                    "the labour party",
+                    "the last five years",
+                    "the lib dems",
+                    "vince cable",
+                    "yesterday"
+                ],
+                "extra_entities": []
+            },
+            "numeric_metrics": {
+                "numeric_consistency_rate": 1.0,
+                "total_source_numbers": 1,
+                "total_summary_numbers": 0,
+                "consistent_numbers": [],
+                "hallucinated_numbers": []
+            }
+        },
+        {
+            "example_index": 8,
+            "id": "70bb5fa813aa597c9dc7a195da539d5fb0a7031d",
+            "source_snippet": "Paul Gregory, 51, of Bedford, has been fined \u00a3795 for having a blue badge, claiming he could only walk 200 metres, when in fact he was a keen walker . A disability badge holder who...",
+            "reference_summary": "Paul Gregory said he could only walk 200 metres in blue badge application .\nHowever, council staff noticed 51-year-old in newspaper report after hike .\nArticle described Gregory as an 'experienced walker' on a three-day trek .\nGregory fined \u00a3795 after admitting to dishonestly obtaining a blue badge .",
+            "generated_summary": "the , , , , , , , , he was ' s . he was ' s ' he was ' s ' he was ' s ' he was ' s ' he was ' s ' he was ' s ' he was ' s '",
+            "rouge1": {
+                "precision": 0.10204081632653061,
+                "recall": 0.08620689655172414,
+                "f1": 0.09345794392523366
+            },
+            "rouge2": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0
+            },
+            "rougel": {
+                "precision": 0.08163265306122448,
+                "recall": 0.06896551724137931,
+                "f1": 0.0747663551401869
+            },
+            "entity_metrics": {
+                "entity_precision": 0.0,
+                "entity_recall": 0.0,
+                "entity_preservation_rate": 0.0,
+                "num_source_entities": 22,
+                "num_summary_entities": 0,
+                "num_preserved_entities": 0,
+                "preserved_entities": [],
+                "missing_entities": [
+                    "19",
+                    "191-mile",
+                    "200 metres",
+                    "2012",
+                    "51",
+                    "795",
+                    "a weekend",
+                    "a \u00a360",
+                    "bedford",
+                    "bedford borough council",
+                    "blue badge",
+                    "cumbria",
+                    "days",
+                    "four",
+                    "gregory",
+                    "luton magistrates' court",
+                    "one year",
+                    "paul gregory",
+                    "shap in cumbria",
+                    "the third day",
+                    "two",
+                    "wales"
+                ],
+                "extra_entities": []
+            },
+            "numeric_metrics": {
+                "numeric_consistency_rate": 1.0,
+                "total_source_numbers": 10,
+                "total_summary_numbers": 0,
+                "consistent_numbers": [],
+                "hallucinated_numbers": []
+            }
+        },
+        {
+            "example_index": 9,
+            "id": "d1c6d891ee60600141277f676266808edf434dc2",
+            "source_snippet": "Apple offers a range of ways to unlock its devices from PINs to passwords and fingerprints. But you could soon use a selfie to gain access to your apps and messages thanks to Apple...",
+            "reference_summary": "The patent was filed in March 2011 and awarded to Apple earlier this week .\nIt details a method of scanning a user's face using the front-facing camera .\nIf the scanned face matches with a photo that was previously taken and stored, the phone unlocks automatically .\nAndroid Lollipop already has a similar feature called 'Trusted face'",
+            "generated_summary": "the is the the the the the the the the . . the . the the . the the . the the . the the . the the . the the . the the . the the . the the .",
+            "rouge1": {
+                "precision": 0.17073170731707318,
+                "recall": 0.1076923076923077,
+                "f1": 0.1320754716981132
+            },
+            "rouge2": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0
+            },
+            "rougel": {
+                "precision": 0.17073170731707318,
+                "recall": 0.1076923076923077,
+                "f1": 0.1320754716981132
+            },
+            "entity_metrics": {
+                "entity_precision": 0.0,
+                "entity_recall": 0.0,
+                "entity_preservation_rate": 0.0,
+                "num_source_entities": 17,
+                "num_summary_entities": 0,
+                "num_preserved_entities": 0,
+                "preserved_entities": [],
+                "missing_entities": [
+                    "android",
+                    "android ice cream sandwich",
+                    "apple",
+                    "california",
+                    "chrome",
+                    "earlier this week",
+                    "fujitsu",
+                    "later this year",
+                    "mailonline",
+                    "march 2011",
+                    "one",
+                    "qualcomm",
+                    "samsung",
+                    "sense id 3d",
+                    "smart lock",
+                    "the face unlock",
+                    "unlock"
+                ],
+                "extra_entities": []
+            },
+            "numeric_metrics": {
+                "numeric_consistency_rate": 1.0,
+                "total_source_numbers": 1,
+                "total_summary_numbers": 0,
+                "consistent_numbers": [],
+                "hallucinated_numbers": []
+            }
+        },
+        {
+            "example_index": 10,
+            "id": "b1f23bd961484edaa46eafe48b1fcc3f4bf02a4e",
+            "source_snippet": "Veteran actor Robert Hardy is selling his enormous collection of antiques in a \u00a3100,000 auction after deciding to downsize his home. The star, known for appearing in All Creatures ...",
+            "reference_summary": "Robert Hardy, 89, is a military enthusiast who studied English literature under J.R.R. Tolkien .\nHe is selling off a huge collection of books, artwork and furniture .\nAmong the objects which have gone up for auction are a huge 3D diorama of the Battle of Agincourt .",
+            "generated_summary": "lendl , , , , , , , , . . . the . the . the . the . . the . . the . . the . . . the . . . . the . . . . . . .",
+            "rouge1": {
+                "precision": 0.25,
+                "recall": 0.19642857142857142,
+                "f1": 0.22
+            },
+            "rouge2": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0
+            },
+            "rougel": {
+                "precision": 0.22727272727272727,
+                "recall": 0.17857142857142858,
+                "f1": 0.2
+            },
+            "entity_metrics": {
+                "entity_precision": 0.0,
+                "entity_recall": 0.0,
+                "entity_preservation_rate": 0.0,
+                "num_source_entities": 57,
+                "num_summary_entities": 0,
+                "num_preserved_entities": 0,
+                "preserved_entities": [],
+                "missing_entities": [
+                    "100,000",
+                    "1415",
+                    "2012",
+                    "20th-century",
+                    "238",
+                    "3d",
+                    "89",
+                    "bbc",
+                    "between 1978 and 1990",
+                    "c.s. lewis",
+                    "churchill",
+                    "co",
+                    "cornelius fudge",
+                    "cotswolds",
+                    "dominic",
+                    "dozens",
+                    "early days",
+                    "frank owen salisbury",
+                    "franklin d. roosevelt",
+                    "gillows of lancaster",
+                    "gloucestershire",
+                    "hardy",
+                    "harry potter",
+                    "helen mirren",
+                    "j.r.r. tolkien",
+                    "john gielgud",
+                    "judi dench",
+                    "l.m. rendall",
+                    "laurence olivier",
+                    "lynda bellingham",
+                    "magdalen college",
+                    "magic",
+                    "magic cornelius fudge",
+                    "mary rose",
+                    "more than 200",
+                    "one",
+                    "oxford",
+                    "richard burton",
+                    "robert hardy",
+                    "saturday",
+                    "siegfried farnon",
+                    "siegriein",
+                    "south cerney",
+                    "the 17th century",
+                    "the 1960s",
+                    "the battle of agincourt",
+                    "the years",
+                    "this saturday",
+                    "tolkien",
+                    "tudor",
+                    "two",
+                    "two years ago",
+                    "up to \u00a32,000",
+                    "up to \u00a34,000",
+                    "winston churchill",
+                    "winter",
+                    "\u00a34,000 to \u00a36,000"
+                ],
+                "extra_entities": []
+            },
+            "numeric_metrics": {
+                "numeric_consistency_rate": 1.0,
+                "total_source_numbers": 16,
+                "total_summary_numbers": 0,
+                "consistent_numbers": [],
+                "hallucinated_numbers": []
+            }
+        },
+        {
+            "example_index": 11,
+            "id": "58f68866990a7627e63332fae2e30bec004c1312",
+            "source_snippet": "Fenerbahce have called for the suspension of the Turkish championship following the gun attack on their team bus on Saturday. The bus came under armed attack as it drove to the air...",
+            "reference_summary": "Bus carrying 40 players and staff back from away game was attacked .\nFenerbahce want Turkish championship halted while matter is resolved .\nThe bus driver was wounded in the attack and taken to hospital .",
+            "generated_summary": "the the the the the the the the the the the the the . the the . the the . the the the the . the the the . the the the . the the the . the the the . the the the .",
+            "rouge1": {
+                "precision": 0.1111111111111111,
+                "recall": 0.1388888888888889,
+                "f1": 0.12345679012345678
+            },
+            "rouge2": {
+                "precision": 0.022727272727272728,
+                "recall": 0.02857142857142857,
+                "f1": 0.02531645569620253
+            },
+            "rougel": {
+                "precision": 0.1111111111111111,
+                "recall": 0.1388888888888889,
+                "f1": 0.12345679012345678
+            },
+            "entity_metrics": {
+                "entity_precision": 0.0,
+                "entity_recall": 0.0,
+                "entity_preservation_rate": 0.0,
+                "num_source_entities": 16,
+                "num_summary_entities": 0,
+                "num_preserved_entities": 0,
+                "preserved_entities": [],
+                "missing_entities": [
+                    "5",
+                    "blood",
+                    "caykur rizespor",
+                    "fener",
+                    "fenerbahce",
+                    "ismail kartal",
+                    "istanbul",
+                    "mahmut uslu",
+                    "mehmet topal",
+                    "saturday",
+                    "sky news: '",
+                    "sunday",
+                    "super lig",
+                    "the turkish football federation",
+                    "trabzon",
+                    "turkey"
+                ],
+                "extra_entities": []
+            },
+            "numeric_metrics": {
+                "numeric_consistency_rate": 1.0,
+                "total_source_numbers": 2,
+                "total_summary_numbers": 0,
+                "consistent_numbers": [],
+                "hallucinated_numbers": []
+            }
+        },
+        {
+            "example_index": 12,
+            "id": "237dd7327fac6d74e5c9979d1475558106e5d346",
+            "source_snippet": "A narrow two-bedroom home so small it is only 5ft wide in places has been snapped up for a staggering \u00a3750,000. The tiny home is sandwiched between two double fronted properties on...",
+            "reference_summary": "Narrow two-bedroom home in Islington, north London has sold for \u00a3750,000 despite measuring 5ft wide in places .\nThe estate agency describes the property as 'well proportioned' and includes a reception room, shower and kitchen .\nIt was put on the market for \u00a3750,000, almost double what it sold for in 2001 when it was previously put up for sale .",
+            "generated_summary": "the , , , , and . . . the . the . the . . the . . the . . the . . . the . . . . the . . . . . . .",
+            "rouge1": {
+                "precision": 0.28205128205128205,
+                "recall": 0.1527777777777778,
+                "f1": 0.1981981981981982
+            },
+            "rouge2": {
+                "precision": 0.02631578947368421,
+                "recall": 0.014084507042253521,
+                "f1": 0.018348623853211007
+            },
+            "rougel": {
+                "precision": 0.20512820512820512,
+                "recall": 0.1111111111111111,
+                "f1": 0.14414414414414414
+            },
+            "entity_metrics": {
+                "entity_precision": 0.0,
+                "entity_recall": 0.0,
+                "entity_preservation_rate": 0.0,
+                "num_source_entities": 20,
+                "num_summary_entities": 0,
+                "num_preserved_entities": 0,
+                "preserved_entities": [],
+                "missing_entities": [
+                    "2001",
+                    "27,000",
+                    "34",
+                    "40",
+                    "50",
+                    "750,000",
+                    "8",
+                    "galley kitchen'",
+                    "henry pryor",
+                    "islington",
+                    "just \u00a3600,000",
+                    "late last year",
+                    "london",
+                    "north devon",
+                    "one",
+                    "only 5",
+                    "only half",
+                    "sunny days",
+                    "two",
+                    "yesterday"
+                ],
+                "extra_entities": []
+            },
+            "numeric_metrics": {
+                "numeric_consistency_rate": 1.0,
+                "total_source_numbers": 10,
+                "total_summary_numbers": 0,
+                "consistent_numbers": [],
+                "hallucinated_numbers": []
+            }
+        },
+        {
+            "example_index": 13,
+            "id": "d3faeb824b69a96775c8ab4613d1dcbbe96f5d2c",
+            "source_snippet": "The mother of a mentally ill daughter who killed herself last month has revealed how her condition worsened over years and eventually drove her to suicide. Doris Fuller's daughter,...",
+            "reference_summary": "Natalie Fuller, 28, stepped in front of a train in Baltimore last month .\nMother Doris shared an account of her life this week in heartfelt article .\nTold how she was diagnosed with psychosis and bipolar disorder aged 22 .\nPair wrote bestselling book, Promise You Won\u2019t Freak Out, in 2004 .\nFeatured nationally on network news and was featured on Oprah .",
+            "generated_summary": "mother legesse , , , , , her she was her she was her . her she was her to her . her she was her to her . her she was her to her . her she was her . her she was her .",
+            "rouge1": {
+                "precision": 0.30434782608695654,
+                "recall": 0.20588235294117646,
+                "f1": 0.2456140350877193
+            },
+            "rouge2": {
+                "precision": 0.022222222222222223,
+                "recall": 0.014925373134328358,
+                "f1": 0.017857142857142856
+            },
+            "rougel": {
+                "precision": 0.2391304347826087,
+                "recall": 0.16176470588235295,
+                "f1": 0.1929824561403509
+            },
+            "entity_metrics": {
+                "entity_precision": 0.0,
+                "entity_recall": 0.0,
+                "entity_preservation_rate": 0.0,
+                "num_source_entities": 26,
+                "num_summary_entities": 0,
+                "num_preserved_entities": 0,
+                "preserved_entities": [],
+                "missing_entities": [
+                    "2004",
+                    "2014",
+                    "22",
+                    "28",
+                    "29 last week",
+                    "a few days",
+                    "a few weeks",
+                    "baltimore",
+                    "bestseller",
+                    "doris fuller's",
+                    "february",
+                    "fuller",
+                    "her early 20s",
+                    "last fall",
+                    "last month",
+                    "last weeks",
+                    "last years",
+                    "maryland",
+                    "more than six years",
+                    "natalie",
+                    "nicaragua",
+                    "one",
+                    "over years",
+                    "the age of 22",
+                    "the treatment advocacy center charity",
+                    "the washington post"
+                ],
+                "extra_entities": []
+            },
+            "numeric_metrics": {
+                "numeric_consistency_rate": 1.0,
+                "total_source_numbers": 5,
+                "total_summary_numbers": 0,
+                "consistent_numbers": [],
+                "hallucinated_numbers": []
+            }
+        },
+        {
+            "example_index": 14,
+            "id": "9bab5c10d10c8875d183b717f80adb6067db169d",
+            "source_snippet": "So, once again, it will all come down to the actions of a man from Salto. On this occasion, though, the focus will not be on Salto\u2019s most famous son. Luis Suarez will be at the Par...",
+            "reference_summary": "PSG host Barcelona in the first leg of their Champions League quarter-final .\nParis Saint-Germain are without the suspended Zlatan Ibrahimovic .\nIn his absence, Edinson Cavani must raise his game as the main attacker .\nThe Uruguayan is being courted by Louis van Gaal at Manchester United .\nCavani will come up against Luis Suarez who was born in the same town .",
+            "generated_summary": "the has been a to the in the . . . . . the . the . the . . . . . . . . . . . . . . . . . . . . . . . . . .",
+            "rouge1": {
+                "precision": 0.25,
+                "recall": 0.15942028985507245,
+                "f1": 0.19469026548672566
+            },
+            "rouge2": {
+                "precision": 0.046511627906976744,
+                "recall": 0.029411764705882353,
+                "f1": 0.036036036036036036
+            },
+            "rougel": {
+                "precision": 0.22727272727272727,
+                "recall": 0.14492753623188406,
+                "f1": 0.17699115044247787
+            },
+            "entity_metrics": {
+                "entity_precision": 0.0,
+                "entity_recall": 0.0,
+                "entity_preservation_rate": 0.0,
+                "num_source_entities": 61,
+                "num_summary_entities": 0,
+                "num_preserved_entities": 0,
+                "preserved_entities": [],
+                "missing_entities": [
+                    "10",
+                    "3",
+                    "4",
+                    "barcelona",
+                    "between february 17 and april 5",
+                    "blanc a week earlier",
+                    "catalonia",
+                    "cavani",
+                    "champions league",
+                    "chelsea",
+                    "david luiz",
+                    "edinson cavani",
+                    "eight",
+                    "el matador",
+                    "europe",
+                    "february",
+                    "france",
+                    "ibrahimovic",
+                    "june 2013",
+                    "last 16",
+                    "last eight",
+                    "last month",
+                    "last summer",
+                    "last weekend",
+                    "laurent blanc\u2019s",
+                    "liverpool",
+                    "london",
+                    "louis van gaal",
+                    "luis suarez",
+                    "manchester city",
+                    "manchester united",
+                    "marco veratti",
+                    "marseille",
+                    "more per week",
+                    "naples",
+                    "napoli",
+                    "nasser al khelaifi",
+                    "one",
+                    "oscar",
+                    "paris",
+                    "psg",
+                    "quarter",
+                    "radamel falcao",
+                    "salto",
+                    "saturday",
+                    "serie a",
+                    "seven",
+                    "six",
+                    "suarez",
+                    "the barclays premier league",
+                    "the champions league\u2019s",
+                    "the coupe de ligue",
+                    "thiago motta",
+                    "this season",
+                    "this summer",
+                    "three",
+                    "two",
+                    "two years",
+                    "uruguay",
+                    "veratti",
+                    "zlatan ibrahimovic"
+                ],
+                "extra_entities": []
+            },
+            "numeric_metrics": {
+                "numeric_consistency_rate": 1.0,
+                "total_source_numbers": 10,
+                "total_summary_numbers": 0,
+                "consistent_numbers": [],
+                "hallucinated_numbers": []
+            }
+        },
+        {
+            "example_index": 15,
+            "id": "ad67d14b82f587b4e5fefe665fe6b6cb89e14c88",
+            "source_snippet": "Time fries when you're having fun. Dedicated waitress Judy Eddingfield, 65, celebrated her 50th anniversary working at Winstead's restaurant in Kansas City last week and declares t...",
+            "reference_summary": "'It's like my home away from home and I just love it here,' Judy Eddingfield said of Winstead's in Kansas City .\nJudy Eddingfield celebrated her 50th anniversary working at Winstead's restaurant last week where she began working when she was 15 in 1965 .\nEddinfield's mother along with her siblings all worked at the restaurant .",
+            "generated_summary": "mother - , , , , , , , her she was a ' s . . . . . . her . . . . her daughter , her . . . . her . . . . . . . . . . . . . . .",
+            "rouge1": {
+                "precision": 0.22,
+                "recall": 0.16176470588235295,
+                "f1": 0.1864406779661017
+            },
+            "rouge2": {
+                "precision": 0.04081632653061224,
+                "recall": 0.029850746268656716,
+                "f1": 0.034482758620689655
+            },
+            "rougel": {
+                "precision": 0.16,
+                "recall": 0.11764705882352941,
+                "f1": 0.13559322033898305
+            },
+            "entity_metrics": {
+                "entity_precision": 0.0,
+                "entity_recall": 0.0,
+                "entity_preservation_rate": 0.0,
+                "num_source_entities": 39,
+                "num_summary_entities": 0,
+                "num_preserved_entities": 0,
+                "preserved_entities": [],
+                "missing_entities": [
+                    "13 years",
+                    "15-years-old",
+                    "18 months later",
+                    "18-months-later",
+                    "1940",
+                    "2014",
+                    "50 years",
+                    "60 some years",
+                    "65",
+                    "66",
+                    "911",
+                    "april, 6, 1965",
+                    "beaver",
+                    "coca-cola",
+                    "eddingfield",
+                    "eddinngfield",
+                    "fox",
+                    "jerry mathers",
+                    "judy",
+                    "judy eddingfield",
+                    "judy eddingfield's",
+                    "just 65 cents",
+                    "kansas city",
+                    "kathi fern",
+                    "last week",
+                    "mathers",
+                    "may 13",
+                    "one",
+                    "sue allen",
+                    "the kansas city star",
+                    "the kansas city star '",
+                    "the late 1970's",
+                    "this day",
+                    "three years old",
+                    "time",
+                    "today",
+                    "tony",
+                    "two",
+                    "winstead"
+                ],
+                "extra_entities": []
+            },
+            "numeric_metrics": {
+                "numeric_consistency_rate": 1.0,
+                "total_source_numbers": 13,
+                "total_summary_numbers": 0,
+                "consistent_numbers": [],
+                "hallucinated_numbers": []
+            }
+        },
+        {
+            "example_index": 16,
+            "id": "3cdc717d765862e42b3a1912c60f97c7cd084388",
+            "source_snippet": "Microsoft has a new pilot program to hire people with autism for full-time positions within the company. The announcement was made on the company's blog by\u00a0Microsoft Corporate VP o...",
+            "reference_summary": "Microsoft Corporate VP of Worldwide Operations, Mary Ellen Smith, who has a teenage son Shawn with autism, made the\u00a0announcement .\nProgram will be run in partnership with Specialisterne, a Danish nonprofit that helps train people with autism for careers in IT .\nFull-time positions based at its Redmond campus, Washington .",
+            "generated_summary": "the ' s ' s ' s ' s ' s ' s ' s ' s ' s ' s ' s ' s ' s ' s ' s ' s ' s ' s ' s ' s ' s ' s ' s ' s '",
+            "rouge1": {
+                "precision": 0.02,
+                "recall": 0.01694915254237288,
+                "f1": 0.01834862385321101
+            },
+            "rouge2": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0
+            },
+            "rougel": {
+                "precision": 0.02,
+                "recall": 0.01694915254237288,
+                "f1": 0.01834862385321101
+            },
+            "entity_metrics": {
+                "entity_precision": 0.0,
+                "entity_recall": 0.0,
+                "entity_preservation_rate": 0.0,
+                "num_source_entities": 22,
+                "num_summary_entities": 0,
+                "num_preserved_entities": 0,
+                "preserved_entities": [],
+                "missing_entities": [
+                    "15 miles",
+                    "computing",
+                    "daily mail",
+                    "just 17 percent",
+                    "last year",
+                    "mary ellen smith",
+                    "microsoft",
+                    "microsoft corporate",
+                    "microsoft corporate vp",
+                    "nadella",
+                    "sarah lambert",
+                    "satya nadella",
+                    "shawn",
+                    "smith",
+                    "specialisterne",
+                    "the grace hopper celebration of women",
+                    "the last 15 years",
+                    "the national autistic society",
+                    "twenty-nine percent",
+                    "twitter",
+                    "two",
+                    "washington"
+                ],
+                "extra_entities": []
+            },
+            "numeric_metrics": {
+                "numeric_consistency_rate": 1.0,
+                "total_source_numbers": 2,
+                "total_summary_numbers": 0,
+                "consistent_numbers": [],
+                "hallucinated_numbers": []
+            }
+        },
+        {
+            "example_index": 17,
+            "id": "f6172a1e869f9a709401cad64d7c10dd435f7328",
+            "source_snippet": "Zara Phillips has revealed how she got her fitness back after the birth of her first child Mia - by hitting the exercise bike every morning before her daughter even woke up. The 33...",
+            "reference_summary": "The Queen's granddaughter is vying for a spot on Team GB in 2016 .\nShe gave birth to her daughter, Mia Grace, in January last year .\nTo regain her fitness Zara, 33, uses an exercise bike every morning .\nShe sticks to a healthy diet and also goes swimming and cycling .",
+            "generated_summary": "caroline wozniacki , , , , , , , her she was a ' s . . . . her . the . . her daughter at the . . . . her . the . . . . her . the . . . . . . . . her .",
+            "rouge1": {
+                "precision": 0.3076923076923077,
+                "recall": 0.2711864406779661,
+                "f1": 0.2882882882882883
+            },
+            "rouge2": {
+                "precision": 0.0392156862745098,
+                "recall": 0.034482758620689655,
+                "f1": 0.03669724770642202
+            },
+            "rougel": {
+                "precision": 0.17307692307692307,
+                "recall": 0.15254237288135594,
+                "f1": 0.16216216216216217
+            },
+            "entity_metrics": {
+                "entity_precision": 0.0,
+                "entity_recall": 0.0,
+                "entity_preservation_rate": 0.0,
+                "num_source_entities": 35,
+                "num_summary_entities": 1,
+                "num_preserved_entities": 0,
+                "preserved_entities": [],
+                "missing_entities": [
+                    "2012",
+                    "2013",
+                    "2016",
+                    "33-year-old",
+                    "april 25",
+                    "daily mail",
+                    "earlier this year zara",
+                    "gatcombe park",
+                    "january",
+                    "jessica ennis-hill",
+                    "jump",
+                    "kate",
+                    "last july",
+                    "last week",
+                    "last year",
+                    "lunch",
+                    "mia",
+                    "mia grace",
+                    "mike tindall",
+                    "one-year-old",
+                    "prince george",
+                    "prince william",
+                    "princess anne",
+                    "queen",
+                    "rio",
+                    "savannah",
+                    "shetland",
+                    "six months old",
+                    "team gb",
+                    "the sunday time magazine",
+                    "this week",
+                    "three",
+                    "tindall",
+                    "zara",
+                    "zara phillips"
+                ],
+                "extra_entities": [
+                    "caroline wozniacki"
+                ]
+            },
+            "numeric_metrics": {
+                "numeric_consistency_rate": 1.0,
+                "total_source_numbers": 5,
+                "total_summary_numbers": 0,
+                "consistent_numbers": [],
+                "hallucinated_numbers": []
+            }
+        },
+        {
+            "example_index": 18,
+            "id": "2c664436d54833bd48e72b30f89b290669afd467",
+            "source_snippet": "In recent years, Iceland has become an increasingly popular filming location with its majestic vistas being prominently featured in many hit TV series or Hollywood blockbusters. De...",
+            "reference_summary": "Iceland has become an increasingly popular filming location recently .\nChristopher Nolan's Interstellar was shot atop the Svinafellsjokull glacier .\nEurope\u2019s most powerful waterfall, Dettifoss, was featured in Prometheus .\nGame of Thrones producers opted to film at Thingvellir National Park .\nWarning: Story contains spoilers for series four of Game of Thrones .",
+            "generated_summary": "the is the the the the the the the . the . the . the . the the . the the . the the . the the . the . the . the . the .",
+            "rouge1": {
+                "precision": 0.16666666666666666,
+                "recall": 0.1016949152542373,
+                "f1": 0.1263157894736842
+            },
+            "rouge2": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0
+            },
+            "rougel": {
+                "precision": 0.16666666666666666,
+                "recall": 0.1016949152542373,
+                "f1": 0.1263157894736842
+            },
+            "entity_metrics": {
+                "entity_precision": 0.0,
+                "entity_recall": 0.0,
+                "entity_preservation_rate": 0.0,
+                "num_source_entities": 28,
+                "num_summary_entities": 0,
+                "num_preserved_entities": 0,
+                "preserved_entities": [],
+                "missing_entities": [
+                    "17",
+                    "1920",
+                    "arya",
+                    "brienne",
+                    "christopher nolan's",
+                    "christopher nolan\u2019s",
+                    "clint eastwood",
+                    "dettifoss",
+                    "europe",
+                    "film in iceland",
+                    "hollywood",
+                    "hound",
+                    "iceland",
+                    "icelandair",
+                    "interstellar",
+                    "prometheus",
+                    "recent years",
+                    "ridley scott",
+                    "sci-fi",
+                    "svartalfheim",
+                    "svinafellsjokull",
+                    "the national park",
+                    "the north of westeros",
+                    "the reykjanes peninsula",
+                    "the skaftafell national park",
+                    "thingvellir national park",
+                    "thrones",
+                    "vatnajokull"
+                ],
+                "extra_entities": []
+            },
+            "numeric_metrics": {
+                "numeric_consistency_rate": 1.0,
+                "total_source_numbers": 2,
+                "total_summary_numbers": 0,
+                "consistent_numbers": [],
+                "hallucinated_numbers": []
+            }
+        },
+        {
+            "example_index": 19,
+            "id": "593fd96abf9a4a7020c5a36982e0e0aa960243d5",
+            "source_snippet": "The family of conjoined twin sisters who died 19 days after they were born have been left mortified after they arrived at their gravesite to find cemetery staff had cleared the bab...",
+            "reference_summary": "Faith and Hope Howie were born with one body and two faces on May 8 .\nThey tragically died in hospital just 19 days after they were born .\nParents Simon Howie and Renee Young visit their grave at Pinegrove in western Sydney fortnightly .\nThey arrived on Thursday to find the grave bare of all the girls' mementos .\nStaff had cleared entire baby section and thrown belongings in rubbish .",
+            "generated_summary": "the , , , , , , , , , , . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .",
+            "rouge1": {
+                "precision": 0.125,
+                "recall": 0.0821917808219178,
+                "f1": 0.09917355371900827
+            },
+            "rouge2": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0
+            },
+            "rougel": {
+                "precision": 0.10416666666666667,
+                "recall": 0.0684931506849315,
+                "f1": 0.08264462809917354
+            },
+            "entity_metrics": {
+                "entity_precision": 0.0,
+                "entity_recall": 0.0,
+                "entity_preservation_rate": 0.0,
+                "num_source_entities": 26,
+                "num_summary_entities": 0,
+                "num_preserved_entities": 0,
+                "preserved_entities": [],
+                "missing_entities": [
+                    "19 days",
+                    "about 25 percent",
+                    "australia",
+                    "daily mail",
+                    "hope",
+                    "hope howie",
+                    "howie",
+                    "just 19 days",
+                    "karl wolfenden",
+                    "less than a month",
+                    "may 8",
+                    "may 8 last year",
+                    "ms young",
+                    "one",
+                    "only 35",
+                    "pinegrove",
+                    "renee",
+                    "renee young",
+                    "simon howie",
+                    "sydney",
+                    "the 11 months",
+                    "the past 11 months",
+                    "the weeks ahead",
+                    "thursday",
+                    "two",
+                    "westmead children's hospital"
+                ],
+                "extra_entities": []
+            },
+            "numeric_metrics": {
+                "numeric_consistency_rate": 1.0,
+                "total_source_numbers": 5,
+                "total_summary_numbers": 0,
+                "consistent_numbers": [],
+                "hallucinated_numbers": []
+            }
+        },
+        {
+            "example_index": 20,
+            "id": "6842c5c0891514dccc3dc329ec74f8f9786234aa",
+            "source_snippet": "Southampton target Tonny Vilhena wants to quit Feyenoord this summer. Ronald Koeman made enquiries for the 20-year-old in January and is keen to bring him to St Mary's. Holland U21...",
+            "reference_summary": "Southampton\u00a0target Tonny Vilhena wants out of Feyenoord this summer .\nRonald Koeman had tried to sign the 20-year-old in January, but was rebuffed .\nVilhena has one year left on his contract, but wants to move away .\nKoeman is also keen on signing his team-mate Jordy Claise .",
+            "generated_summary": "manchester united has scored the for the in the . . . . the . the . the . the . the . . the . the . . . the . the . . . . . the .",
+            "rouge1": {
+                "precision": 0.175,
+                "recall": 0.1206896551724138,
+                "f1": 0.14285714285714285
+            },
+            "rouge2": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0
+            },
+            "rougel": {
+                "precision": 0.125,
+                "recall": 0.08620689655172414,
+                "f1": 0.10204081632653061
+            },
+            "entity_metrics": {
+                "entity_precision": 0.0,
+                "entity_recall": 0.0,
+                "entity_preservation_rate": 0.0,
+                "num_source_entities": 27,
+                "num_summary_entities": 1,
+                "num_preserved_entities": 0,
+                "preserved_entities": [],
+                "missing_entities": [
+                    "10m",
+                    "11",
+                    "20-year-old",
+                    "33",
+                    "56",
+                    "eljero elia's",
+                    "europa league",
+                    "feyenoord",
+                    "holland",
+                    "holland u21",
+                    "january",
+                    "jordy clasie",
+                    "koeman",
+                    "last summer",
+                    "next season",
+                    "one year",
+                    "premier league",
+                    "ronald koeman",
+                    "saints",
+                    "southampton",
+                    "st mary's",
+                    "the premier league",
+                    "the south coast",
+                    "this summer",
+                    "tonny vilhena",
+                    "vilhena",
+                    "werder bremen"
+                ],
+                "extra_entities": [
+                    "manchester united"
+                ]
+            },
+            "numeric_metrics": {
+                "numeric_consistency_rate": 1.0,
+                "total_source_numbers": 7,
+                "total_summary_numbers": 0,
+                "consistent_numbers": [],
+                "hallucinated_numbers": []
+            }
+        }
+    ]
+}

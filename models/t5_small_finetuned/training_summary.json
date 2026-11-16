@@ -1,0 +1,17 @@
+{
+  "model_name": "t5-small",
+  "fine_tuned_on": "CNN/DailyMail 3.0.0",
+  "num_train_examples": 2000,
+  "num_val_examples": 200,
+  "num_test_examples": 100,
+  "epochs": 1,
+  "batch_size": 2,
+  "gradient_accumulation_steps": 8,
+  "effective_batch_size": 16,
+  "learning_rate": 0.0003,
+  "max_source_len": 512,
+  "max_target_len": 128,
+  "training_duration_seconds": 967.34,
+  "avg_val_loss": 1.9747,
+  "device": "mps"
+}

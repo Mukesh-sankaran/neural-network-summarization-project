@@ -1,0 +1,69 @@
+=== T5-SMALL FINE-TUNING EXECUTION LOG ===
+Timestamp: 2026-11-01 01:23:30
+Configuration: {'data_file': 'datasets/cnn_dailymail/3.0.0/train-00000-of-00003.parquet', 'output_dir': 'models/t5_small_finetuned', 'log_file': '_reports/finetune_log.txt', 'test_file': '_reports/test_set.json', 'seed': 42, 'num_train': 2000, 'num_val': 200, 'num_test': 100, 'prefix': 'summarize: ', 'max_source_len': 512, 'max_target_len': 128, 'batch_size': 2, 'grad_accum': 8, 'lr': 0.0003, 'grad_clip': 1.0, 'epochs': 1}
+
+Selected Compute Device: mps
+Reading dataset from datasets/cnn_dailymail/3.0.0/train-00000-of-00003.parquet...
+Splitting dataset deterministically (seed=42): 2000 train, 200 val, 100 test...
+Saved 100 held-out test examples to _reports/test_set.json
+Loading t5-small tokenizer and model in fp32...
+Model parameters: 60,506,624 (Trainable: 60,506,624)
+Starting training: 1 Epoch | 1000 micro-batches | 125 optimizer updates
+Step   20/1000 (  2.0%) | Batch Loss: 3.6069 | Avg Loss (last 20): 2.4246 | Speed: 0.966s/step | Elapsed: 0.3m | ETA: 15.8m
+Step   40/1000 (  4.0%) | Batch Loss: 1.9669 | Avg Loss (last 20): 2.2923 | Speed: 0.856s/step | Elapsed: 0.6m | ETA: 14.6m
+Step   60/1000 (  6.0%) | Batch Loss: 2.8297 | Avg Loss (last 20): 2.2227 | Speed: 0.844s/step | Elapsed: 0.9m | ETA: 13.9m
+Step   80/1000 (  8.0%) | Batch Loss: 1.7881 | Avg Loss (last 20): 2.4519 | Speed: 1.098s/step | Elapsed: 1.3m | ETA: 14.4m
+Step  100/1000 ( 10.0%) | Batch Loss: 2.2254 | Avg Loss (last 20): 2.2346 | Speed: 0.942s/step | Elapsed: 1.6m | ETA: 14.1m
+Step  120/1000 ( 12.0%) | Batch Loss: 2.1210 | Avg Loss (last 20): 2.1148 | Speed: 0.853s/step | Elapsed: 1.9m | ETA: 13.6m
+Step  140/1000 ( 14.0%) | Batch Loss: 1.8152 | Avg Loss (last 20): 2.3901 | Speed: 0.850s/step | Elapsed: 2.1m | ETA: 13.1m
+Step  160/1000 ( 16.0%) | Batch Loss: 2.9934 | Avg Loss (last 20): 2.3929 | Speed: 0.817s/step | Elapsed: 2.4m | ETA: 12.6m
+Step  180/1000 ( 18.0%) | Batch Loss: 2.2988 | Avg Loss (last 20): 2.2408 | Speed: 0.837s/step | Elapsed: 2.7m | ETA: 12.2m
+Step  200/1000 ( 20.0%) | Batch Loss: 1.6191 | Avg Loss (last 20): 2.2524 | Speed: 0.845s/step | Elapsed: 3.0m | ETA: 11.9m
+Step  220/1000 ( 22.0%) | Batch Loss: 1.5382 | Avg Loss (last 20): 2.2938 | Speed: 1.069s/step | Elapsed: 3.3m | ETA: 11.8m
+Step  240/1000 ( 24.0%) | Batch Loss: 1.4138 | Avg Loss (last 20): 2.2366 | Speed: 1.119s/step | Elapsed: 3.7m | ETA: 11.7m
+Step  260/1000 ( 26.0%) | Batch Loss: 2.5073 | Avg Loss (last 20): 2.2066 | Speed: 0.847s/step | Elapsed: 4.0m | ETA: 11.3m
+Step  280/1000 ( 28.0%) | Batch Loss: 2.6061 | Avg Loss (last 20): 2.2523 | Speed: 0.850s/step | Elapsed: 4.3m | ETA: 11.0m
+Step  300/1000 ( 30.0%) | Batch Loss: 2.5985 | Avg Loss (last 20): 2.4383 | Speed: 0.875s/step | Elapsed: 4.6m | ETA: 10.6m
+Step  320/1000 ( 32.0%) | Batch Loss: 1.8004 | Avg Loss (last 20): 2.1414 | Speed: 0.864s/step | Elapsed: 4.8m | ETA: 10.3m
+Step  340/1000 ( 34.0%) | Batch Loss: 1.8737 | Avg Loss (last 20): 2.1647 | Speed: 0.862s/step | Elapsed: 5.1m | ETA: 10.0m
+Step  360/1000 ( 36.0%) | Batch Loss: 3.0190 | Avg Loss (last 20): 2.3144 | Speed: 0.853s/step | Elapsed: 5.4m | ETA: 9.6m
+Step  380/1000 ( 38.0%) | Batch Loss: 2.7856 | Avg Loss (last 20): 2.3730 | Speed: 0.840s/step | Elapsed: 5.7m | ETA: 9.3m
+Step  400/1000 ( 40.0%) | Batch Loss: 0.9519 | Avg Loss (last 20): 2.0902 | Speed: 0.854s/step | Elapsed: 6.0m | ETA: 9.0m
+Step  420/1000 ( 42.0%) | Batch Loss: 2.6619 | Avg Loss (last 20): 2.2318 | Speed: 0.966s/step | Elapsed: 6.3m | ETA: 8.7m
+Step  440/1000 ( 44.0%) | Batch Loss: 1.7143 | Avg Loss (last 20): 2.2222 | Speed: 0.842s/step | Elapsed: 6.6m | ETA: 8.4m
+Step  460/1000 ( 46.0%) | Batch Loss: 1.6847 | Avg Loss (last 20): 2.2857 | Speed: 1.319s/step | Elapsed: 7.0m | ETA: 8.2m
+Step  480/1000 ( 48.0%) | Batch Loss: 2.1365 | Avg Loss (last 20): 2.2783 | Speed: 1.117s/step | Elapsed: 7.4m | ETA: 8.0m
+Step  500/1000 ( 50.0%) | Batch Loss: 2.6345 | Avg Loss (last 20): 2.2191 | Speed: 0.900s/step | Elapsed: 7.7m | ETA: 7.7m
+Step  520/1000 ( 52.0%) | Batch Loss: 3.0559 | Avg Loss (last 20): 2.2335 | Speed: 0.875s/step | Elapsed: 8.0m | ETA: 7.4m
+Step  540/1000 ( 54.0%) | Batch Loss: 2.2341 | Avg Loss (last 20): 2.2652 | Speed: 0.882s/step | Elapsed: 8.3m | ETA: 7.1m
+Step  560/1000 ( 56.0%) | Batch Loss: 2.3348 | Avg Loss (last 20): 2.0799 | Speed: 1.611s/step | Elapsed: 8.8m | ETA: 6.9m
+Step  580/1000 ( 58.0%) | Batch Loss: 3.5297 | Avg Loss (last 20): 2.4116 | Speed: 1.522s/step | Elapsed: 9.3m | ETA: 6.8m
+Step  600/1000 ( 60.0%) | Batch Loss: 1.6507 | Avg Loss (last 20): 2.0237 | Speed: 1.125s/step | Elapsed: 9.7m | ETA: 6.5m
+Step  620/1000 ( 62.0%) | Batch Loss: 2.6404 | Avg Loss (last 20): 2.0392 | Speed: 1.976s/step | Elapsed: 10.4m | ETA: 6.3m
+Step  640/1000 ( 64.0%) | Batch Loss: 1.6291 | Avg Loss (last 20): 1.9683 | Speed: 1.390s/step | Elapsed: 10.8m | ETA: 6.1m
+Step  660/1000 ( 66.0%) | Batch Loss: 2.1325 | Avg Loss (last 20): 2.0579 | Speed: 0.926s/step | Elapsed: 11.1m | ETA: 5.7m
+Step  680/1000 ( 68.0%) | Batch Loss: 1.3113 | Avg Loss (last 20): 2.0514 | Speed: 0.897s/step | Elapsed: 11.4m | ETA: 5.4m
+Step  700/1000 ( 70.0%) | Batch Loss: 3.1164 | Avg Loss (last 20): 2.1580 | Speed: 0.943s/step | Elapsed: 11.7m | ETA: 5.0m
+Step  720/1000 ( 72.0%) | Batch Loss: 3.2927 | Avg Loss (last 20): 2.4405 | Speed: 0.872s/step | Elapsed: 12.0m | ETA: 4.7m
+Step  740/1000 ( 74.0%) | Batch Loss: 1.8432 | Avg Loss (last 20): 2.2366 | Speed: 0.852s/step | Elapsed: 12.3m | ETA: 4.3m
+Step  760/1000 ( 76.0%) | Batch Loss: 1.8906 | Avg Loss (last 20): 2.2057 | Speed: 0.909s/step | Elapsed: 12.6m | ETA: 4.0m
+Step  780/1000 ( 78.0%) | Batch Loss: 1.5817 | Avg Loss (last 20): 2.0943 | Speed: 0.888s/step | Elapsed: 12.9m | ETA: 3.6m
+Step  800/1000 ( 80.0%) | Batch Loss: 1.6936 | Avg Loss (last 20): 2.1104 | Speed: 0.907s/step | Elapsed: 13.2m | ETA: 3.3m
+Step  820/1000 ( 82.0%) | Batch Loss: 1.5113 | Avg Loss (last 20): 2.0289 | Speed: 0.907s/step | Elapsed: 13.5m | ETA: 3.0m
+Step  840/1000 ( 84.0%) | Batch Loss: 3.0301 | Avg Loss (last 20): 2.1585 | Speed: 0.859s/step | Elapsed: 13.8m | ETA: 2.6m
+Step  860/1000 ( 86.0%) | Batch Loss: 3.1903 | Avg Loss (last 20): 2.0451 | Speed: 0.890s/step | Elapsed: 14.1m | ETA: 2.3m
+Step  880/1000 ( 88.0%) | Batch Loss: 2.1612 | Avg Loss (last 20): 2.4559 | Speed: 0.873s/step | Elapsed: 14.4m | ETA: 2.0m
+Step  900/1000 ( 90.0%) | Batch Loss: 1.5089 | Avg Loss (last 20): 2.3083 | Speed: 0.877s/step | Elapsed: 14.7m | ETA: 1.6m
+Step  920/1000 ( 92.0%) | Batch Loss: 1.6265 | Avg Loss (last 20): 2.1368 | Speed: 0.849s/step | Elapsed: 15.0m | ETA: 1.3m
+Step  940/1000 ( 94.0%) | Batch Loss: 2.3013 | Avg Loss (last 20): 2.1832 | Speed: 0.839s/step | Elapsed: 15.3m | ETA: 1.0m
+Step  960/1000 ( 96.0%) | Batch Loss: 2.0153 | Avg Loss (last 20): 2.2605 | Speed: 0.834s/step | Elapsed: 15.5m | ETA: 0.6m
+Step  980/1000 ( 98.0%) | Batch Loss: 2.4507 | Avg Loss (last 20): 2.3786 | Speed: 0.858s/step | Elapsed: 15.8m | ETA: 0.3m
+Step 1000/1000 (100.0%) | Batch Loss: 0.9219 | Avg Loss (last 20): 2.0058 | Speed: 0.904s/step | Elapsed: 16.1m | ETA: 0.0m
+
+Training completed in 16.12 minutes (967.3s).
+
+Running validation on held-out validation split...
+Validation Loss: 1.9747 over 200 examples.
+
+Saving model and tokenizer to models/t5_small_finetuned...
+Fine-tuning pipeline finished successfully! Model ready in models/t5_small_finetuned
